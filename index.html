@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dream Hopper: Badman Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #111;
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 800px;
+            max-height: 600px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI Overlays */
+        .ui-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; pointer-events: none;
+            color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            padding: 20px; box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.85); z-index: 20;
+        }
+        
+        /* Top HUD Bar */
+        #hudBar {
+            position: absolute; top: 0; left: 0; width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px; box-sizing: border-box; pointer-events: none;
+            z-index: 10; gap: 5px;
+        }
+
+        #topRow {
+            display: flex; width: 100%; justify-content: space-between; align-items: center;
+        }
+
+        #levelIndicator {
+            font-weight: bold; color: #aaa; font-size: 0.9rem;
+            background: rgba(0,0,0,0.5); padding: 2px 8px;
+            border-radius: 10px; margin-bottom: 2px;
+        }
+        
+        #timerDisplay {
+            font-weight: bold; color: #ff4444; font-size: 1.5rem;
+            text-shadow: 0 0 10px #ff0000; display: none;
+        }
+
+        #lyricClueBox {
+            background: rgba(0, 0, 0, 0.6); padding: 8px 15px;
+            border-radius: 20px; font-size: 0.9rem; font-style: italic;
+            color: #ffcc00; backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;
+        }
+
+        #inventoryBox {
+            display: flex; gap: 5px; background: rgba(0,0,0,0.6);
+            padding: 5px 10px; border-radius: 15px; min-height: 30px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Level Intro Screen */
+        #levelIntro { pointer-events: auto; background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,20,60,0.95)); }
+        #levelIntro h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
+        #levelIntro p { font-size: 1.2rem; color: #eee; margin-bottom: 1.5rem; max-width: 80%; }
+        
+        .instructions {
+            font-size: 0.9rem !important; color: #aaa !important;
+            margin-bottom: 2rem !important; line-height: 1.6;
+            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;
+        }
+
+        .menu-button {
+            background-color: #6a0dad; color: white; border: none;
+            padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold;
+            border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
+            pointer-events: auto; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: 0 4px 0 #4b0082;
+        }
+        .menu-button:hover { background-color: #8a2be2; transform: translateY(-2px); box-shadow: 0 6px 0 #4b0082; }
+        .menu-button:active { transform: translateY(2px); box-shadow: 0 0 0 #4b0082; }
+
+        #pauseMenu { z-index: 30; }
+        #levelSelectScreen { background: rgba(0,0,0,0.95); z-index: 40; padding: 40px; overflow-y: auto; }
+        
+        #levelGrid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 15px; width: 100%; max-width: 600px; margin-top: 20px;
+        }
+        
+        .level-btn {
+            background: #333; color: #fff; border: 2px solid #555;
+            border-radius: 10px; padding: 15px; font-size: 1.2rem;
+            cursor: pointer; pointer-events: auto;
+        }
+        .level-btn:hover { background: #444; }
+        .level-btn.locked { opacity: 0.3; cursor: not-allowed; border-color: #333; }
+        .level-btn.active { border-color: #ffcc00; color: #ffcc00; }
+
+        .hud-btn {
+            pointer-events: auto; background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3); width: 40px; height: 40px;
+            border-radius: 50%; font-size: 1rem; font-weight: bold; color: #fff;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); margin-left: 10px;
+        }
+
+        #hintMessage {
+            position: absolute; bottom: -60px; left: 50%;
+            transform: translateX(-50%); background: rgba(0, 0, 0, 0.85);
+            padding: 12px 24px; border-radius: 30px; font-size: 1rem;
+            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 15; white-space: nowrap; border: 1px solid rgba(255,204,0,0.3);
+            color: #ffcc00;
+        }
+        #hintMessage.show { bottom: 100px; }
+
+        #mobileControls {
+            position: absolute; bottom: 20px; left: 20px;
+            width: calc(100% - 40px); height: 140px;
+            justify-content: space-between; align-items: flex-end;
+            z-index: 15; pointer-events: none; display: none; 
+        }
+        
+        @media (hover: none) and (pointer: coarse), (max-width: 768px) {
+            #mobileControls { display: flex; }
+            #hintMessage.show { bottom: 180px; }
+        }
+
+        #analogStick {
+            width: 120px; height: 120px;
+            background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%; position: relative; pointer-events: auto;
+            backdrop-filter: blur(4px);
+        }
+
+        #stickKnob {
+            width: 50px; height: 50px; background: rgba(255, 204, 0, 0.8);
+            border-radius: 50%; position: absolute; top: 35px; left: 35px;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); pointer-events: none; 
+            transition: transform 0.1s;
+        }
+        
+        .action-group { display: flex; gap: 20px; align-items: center; padding-bottom: 10px; }
+
+        .round-btn {
+            width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem;
+            pointer-events: auto; display: flex; justify-content: center;
+            align-items: center; backdrop-filter: blur(4px);
+        }
+
+        #dashButton { border: 2px solid rgba(0, 255, 255, 0.5); color: #00ffff; background: rgba(0,0,0,0.3); }
+        #lucidTouchButton {
+            width: 80px; height: 80px; border: 2px solid rgba(255, 204, 0, 0.5);
+            color: #ffcc00; background: rgba(0,0,0,0.3); font-size: 2.2rem;
+        }
+        .round-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Top HUD -->
+        <div id="hudBar">
+            <div id="topRow">
+                <div id="inventoryBox"></div>
+                <div id="timerDisplay">12.00</div>
+                <div style="display:flex;">
+                    <button id="menuButton" class="hud-btn hidden">☰</button>
+                    <button id="pauseButton" class="hud-btn hidden">||</button>
+                </div>
+            </div>
+            <div id="levelIndicator">Level 1 / 12</div>
+            <div id="lyricClueBox" class="hidden"></div>
+        </div>
+
+        <div id="hintMessage"></div>
+
+        <div id="levelIntro" class="ui-overlay">
+            <h1 id="levelTitle"></h1>
+            <p id="levelObjective"></p>
+            <p id="levelInstructions" class="instructions">
+                <strong>Move:</strong> Arrows / WASD / Joystick
+                <br><strong>Interact:</strong> E / ✨ (When highlighted)
+                <br><strong>Dash:</strong> Space / 💨
+            </p>
+            <button id="levelStartButton" class="menu-button">Begin Dream</button>
+        </div>
+        
+        <div id="pauseMenu" class="ui-overlay hidden">
+            <h1 style="color: #ffcc00;">Paused</h1>
+            <button id="resumeButton" class="menu-button">Resume</button>
+            <button onclick="openLevelSelect()" class="menu-button" style="margin-top:10px; background:#444;">Levels</button>
+        </div>
+
+        <div id="levelSelectScreen" class="ui-overlay hidden">
+            <h1>Select Dream</h1>
+            <div id="levelGrid"></div>
+            <button onclick="closeLevelSelect()" class="menu-button" style="margin-top:20px;">Back</button>
+        </div>
+
+        <div id="endScreen" class="ui-overlay hidden">
+            <h1 style="color: #ffcc00;">You have awakened.</h1>
+            <p>You made it through the subconscious.</p>
+            <div style="font-size:3rem; margin:10px;">☀️</div>
+            <button onclick="location.reload()" class="menu-button" style="margin-top:20px;">Sleep Again</button>
+        </div>
+
+        <div id="mobileControls">
+            <div id="analogStick"><div id="stickKnob"></div></div>
+            <div class="action-group">
+                <div id="dashButton" class="round-btn">💨</div>
+                <div id="lucidTouchButton" class="round-btn">✨</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const lyricClueBox = document.getElementById('lyricClueBox');
+        const levelIndicator = document.getElementById('levelIndicator');
+        const inventoryBox = document.getElementById('inventoryBox');
+        const levelIntro = document.getElementById('levelIntro');
+        const levelTitle = document.getElementById('levelTitle');
+        const levelObjective = document.getElementById('levelObjective');
+        const levelStartButton = document.getElementById('levelStartButton');
+        const endScreen = document.getElementById('endScreen');
+        const pauseButton = document.getElementById('pauseButton');
+        const menuButton = document.getElementById('menuButton');
+        const pauseMenu = document.getElementById('pauseMenu');
+        const levelSelectScreen = document.getElementById('levelSelectScreen');
+        const levelGrid = document.getElementById('levelGrid');
+        const resumeButton = document.getElementById('resumeButton');
+        const hintMessage = document.getElementById('hintMessage');
+        const mobileControls = document.getElementById('mobileControls');
+        const timerDisplay = document.getElementById('timerDisplay');
+
+        // --- Game State ---
+        let game = {
+            currentLevel: 0,
+            maxLevelReached: 0,
+            fixedTileSize: 40,
+            isGameRunning: false,
+            isPaused: false,
+            levelMap: [],    
+            worldData: [],   
+            dangers: [],
+            particles: [], 
+            floatingTexts: [],
+            shake: 0,
+            target: null,
+            targetCount: 0,
+            collected: 0,
+            timeLeft: 0, // For time limit levels
+            inventory: [],
+            lastTime: 0,
+            camera: { x: 0, y: 0, lerp: 0.1 },
+            interactionTarget: null,
+            // Sub-timers
+            hintTimer: null,
+            heartTimer: 0,
+            mirrorHintTimer: 0,
+            supplyDropTimer: 0,
+            levelHintTimer: null,
+            persistentWinnerIdx: -1 
+        };
+
+        let player = {
+            x: 0, y: 0,
+            width: game.fixedTileSize * 0.8,
+            height: game.fixedTileSize * 1.6,
+            baseSpeed: 0.25, 
+            dashSpeed: 0.7,
+            isDashing: false, dashCooldown: 0, dashDuration: 0,
+            runFrame1: null, runFrame2: null, currentFrame: 1, lastFrameTime: 0,
+            outfit: 'normal', facing: {x: 0, y: 1} 
+        };
+
+        let keys = { up: false, down: false, left: false, right: false, touch: false, dash: false, joyX: 0, joyY: 0, joyActive: false };
+
+        // --- Visual FX System (Moved Up) ---
+        class Particle {
+            constructor(x, y, color, speed, life) {
+                this.x = x; this.y = y; this.color = color;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * speed;
+                this.life = life; this.maxLife = life; this.size = Math.random() * 4 + 2;
+            }
+            update(dt) {
+                this.x += Math.cos(this.angle) * this.speed;
+                this.y += Math.sin(this.angle) * this.speed;
+                this.life -= dt; this.size *= 0.95;
+            }
+            draw(ctx) {
+                ctx.fillStyle = this.color; ctx.globalAlpha = this.life / this.maxLife;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
+            }
+        }
+
+        class FloatingText {
+            constructor(x, y, text, color) {
+                this.x = x; this.y = y; this.text = text; this.color = color; this.life = 1000; this.yVel = -0.5;
+            }
+            update(dt) { this.y += this.yVel * (dt/16); this.life -= dt; }
+            draw(ctx) {
+                ctx.fillStyle = this.color; ctx.font = "bold 16px Inter"; ctx.textAlign = "center";
+                ctx.shadowColor = "black"; ctx.shadowBlur = 2; ctx.globalAlpha = Math.min(1, this.life / 500);
+                ctx.fillText(this.text, this.x, this.y); ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+            }
+        }
+
+        function spawnParticles(x, y, count, color) {
+            for(let i=0; i<count; i++) game.particles.push(new Particle(x, y, color, 3, 500 + Math.random()*300));
+        }
+        function spawnText(x, y, text, color="#fff") {
+            game.floatingTexts.push(new FloatingText(x, y, text, color));
+        }
+        function shakeScreen(amount) { game.shake = amount; }
+
+        function updateParticles(dt) {
+            for (let i = game.particles.length - 1; i >= 0; i--) {
+                let p = game.particles[i];
+                p.update(dt);
+                if (p.life <= 0) game.particles.splice(i, 1);
+            }
+            for (let i = game.floatingTexts.length - 1; i >= 0; i--) {
+                let t = game.floatingTexts[i];
+                t.update(dt);
+                if (t.life <= 0) game.floatingTexts.splice(i, 1);
+            }
+        }
+
+        // --- Levels ---
+        const levels = [
+            {
+                title: "Dream 1: Insomnia", objective: "Turn off the light (💡) then find your Bed (🛏️).", hint: "The light needs to go out before you can sleep.", lyric: "i aint really been sleep... since the last time i woke up",
+                type: 'tutorial', target: 'B', backgroundColor: '#191970',
+                map: ["#########", "#P......#", "#.......#", "#.L.....#", "#.......#", "#....B..#", "#########"],
+                worldData: [{ x: 2, y: 3, char: 'L', isInteractable: true, isHidden: false, trueForm: '🌑', isLightOn: true, display: '💡' }, { x: 5, y: 5, char: 'B', isInteractable: true, isHidden: false, trueForm: '🛏️', isBed: true, display: '🛏️' }]
+            },
+            {
+                title: "Dream 2: Sweet Dream", objective: "Collect all 5 cronuts!", hint: "Just walk over the croissants to eat them!", lyric: "last time i had a sweet dream i was eating Cronuts,",
+                type: 'collect', target: 'C', backgroundColor: '#87CEEB',
+                map: ["MMMMMMMMMMMMMMM", "M.C.......W..CM", "M.....P.......M", "M.W.......C...M", "M......M......M", "M.C.......M.W.M", "M....W..M....CM", "M.........C...M", "M.W....M.W....M", "MMMMMMMMMMMMMMM"]
+            },
+            {
+                title: "Dream 3: Dying for Love", objective: "Collect 3 Hearts! They move every 6s.", hint: "Look behind the tombstones.", lyric: "last time i had a nightmare, i was dying for love,",
+                type: 'lucid_find', target: 'H', danger: 'G', backgroundColor: '#1a0000',
+                map: ["###########", "#T.....T..#", "#.........#", "#T..P..T..#", "#.........#", "#T.....T..#", "#.........#", "###########"],
+                worldData: [{ x: 1, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 7, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 4, y: 5, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 1, y: 3, char: 'T', isInteractable: false, display: '🪦' }, { x: 7, y: 3, char: 'T', isInteractable: false, display: '🪦' }, { x: 1, y: 5, char: 'T', isInteractable: false, display: '🪦' }, { x: 7, y: 5, char: 'T', isInteractable: false, display: '🪦' }, { x: 8, y: 2, char: 'G', isMoving: true, path: [{x:8,y:2},{x:2,y:2}], display: '👻' }, { x: 2, y: 6, char: 'G', isMoving: true, path: [{x:2,y:6},{x:2,y:2}], display: '👿' }, { x: 8, y: 6, char: 'G', isMoving: true, path: [{x:8,y:6},{x:8,y:2}], display: '👿' }]
+            },
+            {
+                title: "Dream 4: Astral Rising", objective: "Reach the Astral Form (✨) at the top!", hint: "Dodge the demons and head North.", lyric: "fighting for my life astral body rising above,",
+                type: 'lucid_find', target: 'v', danger: 'D', backgroundColor: '#220033', 
+                map: ["########", "#.v....#", "########", "#......#", "#.D..D.#", "#......#", "#.D..D.#", "#......#", "#.P....#", "########"],
+                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'D', isMoving: true, path: [{x:2,y:4},{x:5,y:4}], display: '👿' }, { x: 5, y: 6, char: 'D', isMoving: true, path: [{x:5,y:6},{x:2,y:6}], display: '👿' }]
+            },
+            {
+                title: "Dream 5: Mirrors", objective: "Interact (✨) with mirrors! Find the Star (⭐).", hint: "Watch closely. The correct mirror sparkles occasionally.", lyric: "seeing things that i never seen,",
+                type: 'lucid_find', target: 'S', backgroundColor: '#E6E8FA',
+                map: ["#############", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#.....P.....#", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#############"], worldData: [] 
+            },
+            {
+                title: "Dream 6: Cat-Women", objective: "Find Halle Berry hidden among the cats.", hint: "Interact with the black cats. One is a dancer!", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
+                type: 'lucid_find', target: 'h', backgroundColor: '#222', 
+                map: ["JJJJJJJJJJJ", "J.c..G..c.J", "J.........J", "J.c..P..c.J", "J.........J", "J.b..c..b.J", "J.........J", "J.c..G..c.J", "JJJJJJJJJJJ"],
+                worldData: [{ x: 2, y: 5, char: 'b', isMoving: true, path: [{x:2,y:5},{x:8,y:5}], display: '🦇' }]
+            },
+            {
+                title: "Dream 7: Billie Jean", objective: "Light up 10 Tiles! Dodge Billie Jean.", hint: "Interact with the glowing tile. Watch out for girls!", lyric: "BMs like Billie Jean",
+                type: 'tile_light_up', outfit: 'mj', danger: 'W', backgroundColor: '#000000',
+                map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF", "FFFFFFFF"],
+                worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃' }]
+            },
+            {
+                title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses falling from the NASA chute!", hint: "Stay inside the dome. Catch the glasses before they break.", lyric: "underseas drinking brandy... like i’m Sandy",
+                type: 'drop_catch', target: 'A', danger: 'Q', backgroundColor: '#1E90FF', 
+                map: ["OOOOOOOOOOOOO", "O...........O", "O...AAAAA...O", "O.G.G.G.G.G.O", "O.G.G.G.G.G.O", "O.G.G.T.G.G.O", "O.G.G.G.G.G.O", "O.....P.....O", "OOOOOOOOOOOOO"],
+                worldData: [{ x: 6, y: 5, char: 'T', isInteractable: false, display: '🌳' }, { x: 2, y: 6, char: 'Q', isMoving: true, path: [{x:2,y:6},{x:10,y:6},{x:10,y:4},{x:2,y:4}], display: '🐿️' }]
+            },
+            {
+                title: "Dream 9: Hard Knock Life", objective: "Help Annie. Find a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "Collect all 3 items then return to the girl.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
+                type: 'fetch_quest', target: 'n', backgroundColor: '#A52A2A', 
+                map: ["################", "#.n.........H..#", "#.P..........#.#", "#............#.#", "####.#.#######.#", "#.k..#.........#", "#....######....#", "#.f............#", "################"],
+                worldData: [{ x: 2, y: 1, char: 'n', isInteractable: true, isGate: true, display: '👧' }, { x: 12, y: 1, char: 'H', isInteractable: true, isCollectible: true, display: '❤️' }, { x: 2, y: 5, char: 'k', isInteractable: true, isCollectible: true, display: '🚗' }, { x: 2, y: 7, char: 'f', isInteractable: true, isCollectible: true, display: '👨‍👩‍👧‍👦' }],
+                questItems: ['H', 'k', 'f'],
+            },
+            {
+                title: "Dream 10: Badman's Cul-de-sac",
+                objective: "Save candy from 6 houses! Kids arrive in 12s!",
+                hint: "Watch out for the Jackolantern-Joker-Ghost!",
+                lyric: "takin my sweet time like a badman taking some candy,",
+                type: 'stealth_collect',
+                target: 'y', // Candy
+                danger: 'J', // Joker Ghost
+                outfit: 'batman',
+                backgroundColor: '#FFA500', // Dynamic change in update
+                timeLimit: 12, // 12 Seconds!
+                map: [
+                    "................",
+                    ".HH..........HH.",
+                    "H...y......y...H",
+                    "H..y........y..H",
+                    "....y......y....",
+                    "................",
+                    "H......P.......H", 
+                    "H..y........y..H",
+                    ".HH..........HH.",
+                    "................"
+                ],
+                worldData: [
+                    // The Joker-Ghost (J)
+                    { x: 8, y: 4, char: 'J', isMoving: true, isChaser: true, speedMult: 0.6, display: '🎃' },
+                    // House Graphics (Static)
+                    { x: 1, y: 1, char: 'H', display: '🏠' }, { x: 14, y: 1, char: 'H', display: '🏠' },
+                    { x: 0, y: 3, char: 'H', display: '🏠' }, { x: 15, y: 3, char: 'H', display: '🏠' },
+                    { x: 0, y: 6, char: 'H', display: '🏠' }, { x: 15, y: 6, char: 'H', display: '🏠' },
+                    { x: 1, y: 8, char: 'H', display: '🏠' }, { x: 14, y: 8, char: 'H', display: '🏠' }
+                ]
+            },
+            {
+                title: "Dream 11: To Be Continued...",
+                objective: "You have survived the night.",
+                hint: "More levels coming soon.",
+                lyric: "LEVEL 12... TBC",
+                type: 'tutorial', 
+                target: 'X', 
+                backgroundColor: '#000000',
+                map: ["..........", "..........", "....P.....", "..........", ".........."],
+                worldData: []
+            }
+        ];
+
+        // --- Player Sprite ---
+        function createPlayerTextures() {
+            player.runFrame1 = document.createElement('canvas'); player.runFrame1.width = 64; player.runFrame1.height = 128;
+            player.runFrame2 = document.createElement('canvas'); player.runFrame2.width = 64; player.runFrame2.height = 128;
+            drawPlayerSprite(player.runFrame1.getContext('2d'), 'run1'); drawPlayerSprite(player.runFrame2.getContext('2d'), 'run2');
+        }
+        
+        function updatePlayerTexture() {
+             if (!player.runFrame1 || !player.runFrame2) createPlayerTextures();
+             if(player.outfit === 'mj') {
+                 drawMJSprite(player.runFrame1.getContext('2d'), 'run1'); drawMJSprite(player.runFrame2.getContext('2d'), 'run2');
+             } else if (player.outfit === 'batman') {
+                 drawBatmanSprite(player.runFrame1.getContext('2d'), 'run1'); drawBatmanSprite(player.runFrame2.getContext('2d'), 'run2');
+             } else {
+                 drawPlayerSprite(player.runFrame1.getContext('2d'), 'run1'); drawPlayerSprite(player.runFrame2.getContext('2d'), 'run2');
+             }
+        }
+
+        function drawPlayerSprite(ctx, mode) {
+            ctx.clearRect(0, 0, 64, 128);
+            const skinTone = '#A67A53', hatColor = '#6B4226', jerseyColor = '#6A0DAD';
+            const hairColor = '#1C1C1C', pantsColor = '#2E478B', shoeColor = '#3D3D3D';
+            ctx.fillStyle = hatColor; let hatY = 10;
+            ctx.fillRect(16, hatY, 32, 10); ctx.fillRect(12, hatY + 10, 40, 6);
+            ctx.fillRect(12, hatY + 16, 8, 12); ctx.fillRect(44, hatY + 16, 8, 12);
+            ctx.fillStyle = hairColor; ctx.fillRect(20, hatY + 16, 24, 10);
+            ctx.beginPath(); ctx.arc(20, hatY + 20, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(44, hatY + 20, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = skinTone; ctx.fillRect(22, 30, 20, 20);
+            ctx.fillStyle = jerseyColor; ctx.fillRect(16, 50, 32, 40);
+            ctx.fillStyle = skinTone;
+            if (mode === 'run1') { ctx.fillRect(8, 50, 8, 30); ctx.fillRect(48, 50, 8, 30); }
+            else { ctx.fillRect(8, 54, 8, 30); ctx.fillRect(48, 54, 8, 30); }
+            ctx.fillStyle = pantsColor;
+            if (mode === 'run1') { ctx.fillRect(18, 90, 12, 30); ctx.fillRect(34, 90, 12, 26); }
+            else { ctx.fillRect(18, 90, 12, 26); ctx.fillRect(34, 90, 12, 30); }
+            ctx.fillStyle = shoeColor;
+            if (mode === 'run1') { ctx.fillRect(16, 120, 14, 8); ctx.fillRect(32, 116, 14, 8); }
+            else { ctx.fillRect(16, 116, 14, 8); ctx.fillRect(32, 120, 14, 8); }
+        }
+        
+        function drawMJSprite(ctx, mode) {
+            ctx.clearRect(0, 0, 64, 128);
+            const skinTone = '#A67A53'; 
+            ctx.fillStyle = '#111'; ctx.fillRect(12, 15, 40, 12); ctx.fillRect(18, 5, 28, 12); 
+            ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(20, 30, 6, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(44, 30, 6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = skinTone; ctx.fillRect(22, 25, 20, 20);
+            ctx.fillStyle = '#222'; ctx.fillRect(14, 50, 36, 35);
+            ctx.fillStyle = '#ffcccc'; ctx.beginPath(); ctx.moveTo(26, 50); ctx.lineTo(32, 70); ctx.lineTo(38, 50); ctx.fill();
+            ctx.fillStyle = '#111';
+            if (mode === 'run1') { ctx.fillRect(6, 50, 8, 30); ctx.fillRect(50, 50, 8, 30); }
+            else { ctx.fillRect(6, 54, 8, 30); ctx.fillRect(50, 54, 8, 30); }
+            ctx.fillStyle = '#111';
+            if (mode === 'run1') { ctx.fillRect(18, 85, 10, 28); ctx.fillRect(36, 85, 10, 24); }
+            else { ctx.fillRect(18, 85, 10, 24); ctx.fillRect(36, 85, 10, 28); }
+            ctx.fillStyle = '#fff';
+            if (mode === 'run1') { ctx.fillRect(20, 113, 6, 6); ctx.fillRect(38, 109, 6, 6); }
+            else { ctx.fillRect(20, 109, 6, 6); ctx.fillRect(38, 113, 6, 6); }
+            ctx.fillStyle = '#000';
+            if (mode === 'run1') { ctx.fillRect(18, 119, 10, 6); ctx.fillRect(36, 115, 10, 6); }
+            else { ctx.fillRect(18, 115, 10, 6); ctx.fillRect(36, 119, 10, 6); }
+        }
+
+        function drawBatmanSprite(ctx, mode) {
+            ctx.clearRect(0, 0, 64, 128);
+            const skinTone = '#A67A53'; const suitColor = '#444444'; const capeColor = '#111111'; const beltColor = '#FFD700';
+            ctx.fillStyle = capeColor; ctx.beginPath(); ctx.moveTo(20, 5); ctx.lineTo(25, 25); ctx.lineTo(15, 25); ctx.fill(); 
+            ctx.beginPath(); ctx.moveTo(44, 5); ctx.lineTo(49, 25); ctx.lineTo(39, 25); ctx.fill(); 
+            ctx.fillStyle = capeColor; ctx.fillRect(18, 20, 28, 20);
+            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(22, 28); ctx.lineTo(28, 32); ctx.lineTo(22, 32); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(42, 28); ctx.lineTo(36, 32); ctx.lineTo(42, 32); ctx.fill();
+            ctx.fillStyle = skinTone; ctx.fillRect(26, 34, 12, 6);
+            ctx.fillStyle = suitColor; ctx.fillRect(14, 45, 36, 40);
+            ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(32, 55, 10, 5, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = capeColor;
+            if (mode === 'run1') { ctx.fillRect(10, 50, 4, 50); ctx.fillRect(50, 50, 4, 50); }
+            else { ctx.fillRect(8, 52, 4, 52); ctx.fillRect(52, 52, 4, 52); }
+            ctx.fillStyle = beltColor; ctx.fillRect(14, 80, 36, 6);
+            ctx.fillStyle = suitColor;
+            if (mode === 'run1') { ctx.fillRect(18, 86, 10, 28); ctx.fillRect(36, 86, 10, 24); }
+            else { ctx.fillRect(18, 86, 10, 24); ctx.fillRect(36, 86, 10, 28); }
+            ctx.fillStyle = capeColor;
+            if (mode === 'run1') { ctx.fillRect(16, 114, 14, 10); ctx.fillRect(34, 110, 14, 10); }
+            else { ctx.fillRect(16, 110, 14, 10); ctx.fillRect(34, 114, 14, 10); }
+        }
+
+        function drawPlayer() {
+            let frame = player.currentFrame === 1 ? player.runFrame1 : player.runFrame2;
+            if (keys.up || keys.down || keys.left || keys.right || keys.joyActive) {
+                if (Date.now() - player.lastFrameTime > 150) {
+                    player.currentFrame = player.currentFrame === 1 ? 2 : 1; player.lastFrameTime = Date.now();
+                    if (keys.up) player.facing = {x: 0, y: -1}; else if (keys.down) player.facing = {x: 0, y: 1}; else if (keys.left) player.facing = {x: -1, y: 0}; else if (keys.right) player.facing = {x: 1, y: 0}; else if (keys.joyActive) { if (Math.abs(keys.joyX) > Math.abs(keys.joyY)) { player.facing = {x: keys.joyX > 0 ? 1 : -1, y: 0}; } else { player.facing = {x: 0, y: keys.joyY > 0 ? 1 : -1}; } }
+                }
+            }
+            ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.beginPath(); ctx.arc(player.x + player.width/2, player.y + player.height/2, 30, 0, Math.PI*2); ctx.fill(); ctx.restore();
+            ctx.drawImage(frame, player.x, player.y, player.width, player.height);
+            
+            let target = game.interactionTarget;
+            if (!target && levels[game.currentLevel].type === 'tile_light_up') {
+                 target = getTileAt(player.x+player.width/2, player.y+player.height/2);
+                 if (target && !target.active) target = null;
+            }
+            if (target) {
+                if(target.isCollected || (target.emoji === '' && !target.active)) return;
+                const x = (target.x !== undefined ? target.x : (target.c * game.fixedTileSize)) + game.fixedTileSize/2;
+                const y = (target.y !== undefined ? target.y : (target.r * game.fixedTileSize)) + game.fixedTileSize/2;
+                ctx.save(); ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 4;
+                const scale = 1 + Math.sin(Date.now() / 200) * 0.15;
+                ctx.beginPath(); ctx.arc(x, y, 25 * scale, 0, Math.PI*2); ctx.stroke();
+                ctx.fillStyle = "#ffff00"; ctx.font = "bold 24px Inter"; ctx.textAlign = "center"; ctx.shadowColor = "black"; ctx.shadowBlur = 4;
+                ctx.fillText("!", x, y - 35); ctx.restore();
+            }
+        }
+
+        // --- Game Mechanics ---
+        function loadLevel(levelIndex) {
+            if (levelIndex >= levels.length) { winGame(); return; }
+            game.isGameRunning = false; game.isPaused = false;
+            if (levelIndex !== game.currentLevel) game.persistentWinnerIdx = -1; 
+            game.currentLevel = levelIndex;
+            if (levelIndex > game.maxLevelReached) game.maxLevelReached = levelIndex;
+            
+            const level = levels[levelIndex];
+            player.outfit = level.outfit || 'normal';
+            updatePlayerTexture();
+            
+            game.levelMap = []; game.worldData = []; game.dangers = []; game.particles = []; game.floatingTexts = []; game.shake = 0;
+            game.target = level.target; game.collected = 0; game.targetCount = 0; game.heartTimer = 0; game.mirrorHintTimer = 0; game.supplyDropTimer = 0; game.levelHintTimer = null; game.inventory = [];
+            
+            // Timer Setup
+            if (level.timeLimit) {
+                game.timeLeft = level.timeLimit;
+                timerDisplay.style.display = "block";
+            } else {
+                game.timeLeft = 0;
+                timerDisplay.style.display = "none";
+            }
+            
+            updateInventoryUI();
+            player.width = game.fixedTileSize * 0.8; player.height = game.fixedTileSize * 1.6;
+
+            const map = level.map;
+            const hideChars = ['L', 'B', 'H', 'S', 'm', 'c', 'k', 'N', 'A', 'n', 'f', 'y', 'X', 'g', 'o', 'e', 'd', '$', 'K', 'Q', 'P'];
+
+            for (let r = 0; r < map.length; r++) {
+                game.levelMap[r] = [];
+                for (let c = 0; c < map[r].length; c++) {
+                    const char = map[r][c];
+                    const obj = { c: c, r: r, x: c * game.fixedTileSize, y: r * game.fixedTileSize, emoji: getEmoji(char), char: char };
+                    game.levelMap[r][c] = obj;
+                    
+                    if (char === 'P') {
+                        player.x = obj.x; player.y = obj.y - (player.height - game.fixedTileSize); 
+                        game.camera.x = player.x + (player.width / 2); game.camera.y = player.y + (player.height / 2);
+                        game.levelMap[r][c].emoji = ''; game.levelMap[r][c].char = '.';
+                    } else if (char === 'X' && level.title.includes("Billie Jean")) {
+                         player.x = obj.x; player.y = obj.y - (player.height - game.fixedTileSize);
+                         game.camera.x = player.x; game.camera.y = player.y;
+                    }
+                }
+            }
+            
+            if (level.worldData) {
+                game.worldData = level.worldData.map(obj => ({
+                    ...obj, x: obj.x * game.fixedTileSize, y: obj.y * game.fixedTileSize, emoji: obj.display || getEmoji(obj.char), isCollected: false, currentPathIndex: 0
+                }));
+                game.worldData.forEach(obj => { if (obj.char === level.danger) game.dangers.push(obj); });
+                game.worldData.forEach(obj => {
+                    const gridX = Math.round(obj.x / game.fixedTileSize); const gridY = Math.round(obj.y / game.fixedTileSize);
+                    if (game.levelMap[gridY] && game.levelMap[gridY][gridX]) {
+                         if(hideChars.includes(game.levelMap[gridY][gridX].char) || level.type === 'fetch_quest') {
+                             game.levelMap[gridY][gridX].emoji = ''; game.levelMap[gridY][gridX].char = '.';
+                         }
+                    }
+                });
+            }
+
+            if (level.title.includes("Mirrors")) {
+                const mirrors = [];
+                for (let r = 0; r < map.length; r++) { for (let c = 0; c < map[r].length; c++) { if (map[r][c] === 'm') { mirrors.push({ x: c, y: r }); game.levelMap[r][c].emoji = ''; } } }
+                if (mirrors.length > 0) {
+                    if (game.persistentWinnerIdx === -1 || game.persistentWinnerIdx >= mirrors.length) game.persistentWinnerIdx = Math.floor(Math.random() * mirrors.length);
+                    mirrors.forEach((pos, idx) => { game.worldData.push({ x: pos.x * game.fixedTileSize, y: pos.y * game.fixedTileSize, emoji: '🪞', char: 'm', isInteractable: true, isHidden: false, trueForm: (idx === game.persistentWinnerIdx) ? 'S' : 'D', display: '🪞' }); });
+                }
+            }
+            
+            if (level.title.includes("Cat-Women")) {
+                const cats = [];
+                for (let r = 0; r < map.length; r++) { for (let c = 0; c < map[r].length; c++) { if (map[r][c] === 'c') { cats.push({ x: c, y: r }); game.levelMap[r][c].emoji = ''; } } }
+                if (cats.length > 0) {
+                    if (game.persistentWinnerIdx === -1 || game.persistentWinnerIdx >= cats.length) game.persistentWinnerIdx = Math.floor(Math.random() * cats.length);
+                     cats.forEach((pos, idx) => { game.worldData.push({ x: pos.x * game.fixedTileSize, y: pos.y * game.fixedTileSize, emoji: '🐈‍⬛', char: 'c', isInteractable: true, isHidden: false, trueForm: (idx === game.persistentWinnerIdx) ? 'h' : 'G', display: '🐈‍⬛' }); });
+                }
+            }
+            
+            if (level.type === 'tile_light_up') { game.targetCount = 10; activateRandomTile(); }
+            if (level.type === 'drop_catch') { game.targetCount = 5; }
+            if (level.type === 'collect' || level.type === 'stealth_collect') {
+                for (let r = 0; r < map.length; r++) { for (let c = 0; c < map[r].length; c++) { if (map[r][c] === level.target) game.targetCount++; } }
+            } else if (level.type === 'lucid_find' && level.title.includes("Dying for Love")) { game.targetCount = 3; }
+
+            if (game.levelHintTimer) clearTimeout(game.levelHintTimer);
+            game.levelHintTimer = setTimeout(() => { showHint(level.hint || "Look for clues in the lyrics!"); }, 5000);
+
+            levelIndicator.textContent = `Level ${levelIndex + 1} / ${levels.length}`;
+            levelTitle.textContent = level.title; levelObjective.textContent = level.objective; lyricClueBox.textContent = `"${level.lyric}"`;
+            lyricClueBox.classList.add('hidden'); inventoryBox.classList.add('hidden');
+            levelIntro.classList.remove('hidden'); pauseButton.classList.add('hidden'); menuButton.classList.add('hidden'); pauseMenu.classList.add('hidden'); levelSelectScreen.classList.add('hidden');
+        }
+
+        function activateRandomTile() {
+            const tiles = [];
+            for (let r = 0; r < game.levelMap.length; r++) { for (let c = 0; c < game.levelMap[r].length; c++) { if (game.levelMap[r][c].char === 'F') tiles.push(game.levelMap[r][c]); } }
+            tiles.forEach(t => t.active = false); const rnd = tiles[Math.floor(Math.random() * tiles.length)]; rnd.active = true;
+        }
+
+        function getEmoji(char) {
+            const map = {
+                '#': '🧱', 'L': '💡', 'B': '🛏️', 'C': '🥐', 'M': '☁️', 'W': '💨', 'H': '❤️', 'R': '🪨', 'D': '👿', 'm': '🪞', 'E': '👁️', 'J': '🎃', 'G': '👻', 'c': '🐈‍⬛', 'b': '🦇', 'k': '🚗', 'F': '🐠', 'Z': '🦀', 'T': '🐢', 'O': '🐙', 'N': '🌰', 'S': '🌊', 'A': '🥃', 'U': '🏖️', 'Y': '✔️', 'N': '❌', 'd': '💎', '$': '💰', 'p': '📈', 'i': '🏢', 'b': '🏦', 'w': '💼', 'v': '✨', '8': '∞', 'z': '🧘', 'X': '🚁', 'g': '👓', 'o': '👵', 's': '🛥️', 'e': '🎖️', 'y': '🍬', 'V': '🦇', 'T': '🪦', 'K': '🚓', 'Q': '🐿️', 'O': '🟦', 'A': '😠', 'P': '', 'H': '🏠', 'J': '🎃'
+            };
+            return map[char] || '';
+        }
+
+        function startGame() {
+            game.isGameRunning = true; game.isPaused = false; game.lastTime = performance.now(); 
+            levelIntro.classList.add('hidden'); pauseButton.classList.remove('hidden'); menuButton.classList.remove('hidden'); lyricClueBox.classList.remove('hidden'); inventoryBox.classList.remove('hidden');
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function togglePause() {
+            if (!game.isGameRunning) return;
+            game.isPaused = !game.isPaused;
+            if (game.isPaused) { pauseMenu.classList.remove('hidden'); lyricClueBox.classList.add('hidden'); } 
+            else { pauseMenu.classList.add('hidden'); lyricClueBox.classList.remove('hidden'); game.lastTime = performance.now(); requestAnimationFrame(gameLoop); }
+        }
+        
+        function openLevelSelect() {
+            pauseMenu.classList.add('hidden'); levelSelectScreen.classList.remove('hidden');
+            levelGrid.innerHTML = '';
+            levels.forEach((lvl, idx) => {
+                const btn = document.createElement('div'); btn.classList.add('level-btn'); btn.textContent = idx + 1;
+                if (idx > game.maxLevelReached) { btn.classList.add('locked'); btn.textContent = "🔒"; } 
+                else { if (idx === game.currentLevel) btn.classList.add('active'); btn.onclick = () => { closeLevelSelect(); loadLevel(idx); startGame(); }; }
+                levelGrid.appendChild(btn);
+            });
+        }
+        
+        function closeLevelSelect() { levelSelectScreen.classList.add('hidden'); pauseMenu.classList.remove('hidden'); }
+        function showHint(message) {
+            if (game.hintTimer) clearTimeout(game.hintTimer);
+            hintMessage.textContent = message; hintMessage.classList.add('show');
+            game.hintTimer = setTimeout(() => { hintMessage.classList.remove('show'); }, 2000);
+        }
+        
+        function updateInventoryUI() {
+            inventoryBox.innerHTML = '';
+            if (game.inventory.length === 0) { inventoryBox.style.display = 'none'; } 
+            else { inventoryBox.style.display = 'flex'; game.inventory.forEach(item => { const el = document.createElement('div'); el.textContent = getEmoji(item) || item; el.style.fontSize = '1.2rem'; inventoryBox.appendChild(el); }); }
+        }
+
+        function nextLevel() {
+            game.persistentWinnerIdx = -1; if (game.levelHintTimer) clearTimeout(game.levelHintTimer);
+            spawnParticles(player.x, player.y, 50, "#fff"); setTimeout(() => { loadLevel(game.currentLevel + 1); }, 800);
+        }
+
+        function gameOver(message) {
+            if (game.levelHintTimer) clearTimeout(game.levelHintTimer);
+            shakeScreen(10); game.isGameRunning = false;
+            levelTitle.textContent = "Nightmare..."; levelObjective.textContent = message || "You got lost in the dream.";
+            levelStartButton.textContent = "Try Again";
+            levelStartButton.onclick = () => { loadLevel(game.currentLevel); startGame(); };
+            levelIntro.classList.remove('hidden'); pauseButton.classList.add('hidden'); menuButton.classList.add('hidden'); lyricClueBox.classList.add('hidden');
+        }
+        
+        function winGame() {
+            game.isGameRunning = false; endScreen.classList.remove('hidden'); pauseButton.classList.add('hidden'); menuButton.classList.add('hidden'); lyricClueBox.classList.add('hidden');
+        }
+        
+        function doLucidTouch() {
+            if (keys.touch) keys.touch = false;
+            
+            const level = levels[game.currentLevel];
+            if (level.type === 'tile_light_up') {
+                 const t = getTileAt(player.x + player.width/2, player.y + player.height/2);
+                 if (t && t.active) {
+                     t.active = false; game.collected++;
+                     spawnParticles(t.x+20, t.y+20, 20, "#fff"); spawnText(t.x+20, t.y, "👟", "#fff");
+                     if (game.collected >= game.targetCount) { showHint("Dance complete!"); setTimeout(nextLevel, 1000); } 
+                     else { activateRandomTile(); }
+                     return;
+                 }
+            }
+
+            if (game.interactionTarget) {
+                const obj = game.interactionTarget;
+                const ox = obj.x + game.fixedTileSize / 2; const oy = obj.y + game.fixedTileSize / 2;
+                spawnParticles(ox, oy, 10, "#ffcc00");
+
+                if (level.type === 'tutorial') {
+                    if (obj.isBed) {
+                        const light = game.worldData.find(o => o.char === 'L');
+                        if (light && light.isLightOn) { showHint("I can't sleep with the light on!"); spawnText(ox, oy - 20, "Too Bright!", "#ff5555"); } 
+                        else { showHint("Sweet dreams..."); spawnText(ox, oy - 20, "Zzz...", "#aaa"); nextLevel(); }
+                        return;
+                    }
+                    if (obj.char === 'L') { obj.char = obj.trueForm; obj.emoji = obj.trueForm; obj.isLightOn = false; spawnText(ox, oy - 20, "Click!", "#ffff00"); showHint("You turned off the light."); return; }
+                }
+                
+                if (level.type === 'lucid_choice') { if (obj.trueForm === 'D') gameOver("Wrong choice..."); else { showHint("Wisely chosen."); nextLevel(); } return; }
+                
+                if (level.title.includes("Mirrors")) {
+                    obj.isInteractable = false; 
+                    if (obj.trueForm === 'D') { obj.emoji = '👿'; spawnParticles(ox, oy, 30, "#555"); shakeScreen(10); spawnText(ox, oy - 20, "DEMON!", "#ff0000"); setTimeout(() => gameOver("Broken Mirror... Bad luck!"), 1000); } 
+                    else { obj.emoji = '⭐'; spawnParticles(ox, oy, 100, "#ffff00"); spawnParticles(ox, oy, 80, "#ffffff"); shakeScreen(30); spawnText(ox, oy - 40, "SUPER NOVA!", "#ffff00"); showHint("You found the Star!"); setTimeout(nextLevel, 1500); }
+                    return;
+                }
+
+                if (level.title.includes("Cat-Women")) {
+                    obj.isInteractable = false;
+                    if (obj.trueForm === 'G') { obj.emoji = '👻'; spawnParticles(ox, oy, 20, "#888"); spawnText(ox, oy - 20, "BOO!", "#fff"); setTimeout(() => gameOver("It was a ghost!"), 800); } 
+                    else { obj.emoji = '💃'; spawnParticles(ox, oy, 50, "#ff00ff"); spawnText(ox, oy - 20, "HALLE!", "#ff00ff"); showHint("Found her!"); setTimeout(nextLevel, 1500); }
+                    return;
+                }
+                
+                if (obj.isCollectible || obj.char === game.target || (level.title.includes("Dying for Love") && obj.trueForm === 'H')) {
+                    spawnParticles(ox, oy, 15, "#00ff00"); spawnText(ox, oy - 20, "+1", "#00ff00");
+                    if (obj.isCollectible) {
+                        game.inventory.push(obj.char); updateInventoryUI(); obj.isCollected = true; obj.isInteractable = false; obj.emoji = '';
+                        showHint(`Found ${getEmoji(obj.char)}!`);
+                        const gate = game.worldData.find(g => g.isGate);
+                        if (gate && game.inventory.length >= level.questItems.length) { showHint(`Return to the ${gate.display}!`); }
+                        return;
+                    } else if (level.type === 'lucid_find' || level.type === 'stealth_collect') {
+                        obj.char = obj.trueForm; obj.emoji = obj.display || getEmoji(obj.char);
+                        if (['D','G','x','S','P'].includes(obj.trueForm)) { 
+                            if (level.title.includes("No Faking")) { showHint("Fake!"); obj.emoji = '🚫'; return; }
+                            gameOver("It was a trap!"); return; 
+                        }
+                        if (level.title.includes("Dying for Love")) {
+                            game.collected++; obj.isCollected = true; obj.isInteractable = false; obj.emoji = ''; 
+                            spawnText(ox, oy - 20, "Got Heart!", "#ff0000"); showHint(`Collected ${game.collected}/3 Hearts`);
+                            if (game.collected >= 3) { nextLevel(); } return;
+                        }
+                        // Stealth Collect logic (Badman)
+                        if (level.type === 'stealth_collect') {
+                            game.collected++; obj.isCollected = true; obj.isInteractable = false; obj.emoji = '';
+                            spawnText(ox, oy - 20, "Saved Candy!", "#ffff00");
+                            if (game.collected >= game.targetCount) { nextLevel(); }
+                            return;
+                        }
+                        showHint(`Found it!`); if (obj.char === game.target) setTimeout(nextLevel, 1000); return;
+                    }
+                }
+                
+                if (level.type === 'drop_catch' && obj.char === 'A') {
+                     game.collected++; obj.isCollected = true; obj.emoji = '';
+                     spawnParticles(ox, oy, 15, "#ffaa00"); spawnText(ox, oy, "Cheers!", "#ffaa00");
+                     if (game.collected >= game.targetCount) { showHint("Bottoms Up!"); setTimeout(nextLevel, 1000); }
+                     return;
+                }
+                
+                if (level.type === 'fetch_quest' && obj.isGate) {
+                    if (game.inventory.length >= level.questItems.length) { spawnText(ox, oy - 20, "Thanks!", "#fff"); nextLevel(); } 
+                    else { showHint(`Need more items!`); }
+                    return;
+                }
+            } else {
+                const cx = player.x + player.width / 2; const cy = player.y + player.height / 2;
+                spawnText(cx, cy - 40, "?", "#ccc");
+            }
+        }
+
+        function doDash() {
+            if (game.isPaused || !game.isGameRunning) return;
+            const now = Date.now();
+            if (now - player.dashCooldown > 1000) { 
+                player.isDashing = true; player.dashDuration = 200; player.dashCooldown = now;
+                spawnParticles(player.x + player.width/2, player.y + player.height/2, 20, "#00ffff");
+                spawnText(player.x, player.y, "DASH!", "#00ffff");
+            }
+        }
+
+        // --- Updates ---
+        function update(deltaTime) {
+            const level = levels[game.currentLevel];
+            
+            // Timer Logic
+            if (level.timeLimit && !game.isPaused) {
+                game.timeLeft -= deltaTime / 1000;
+                timerDisplay.textContent = Math.max(0, game.timeLeft).toFixed(2);
+                if (game.timeLeft <= 0) { gameOver("Kids Arrived! Game Over."); return; }
+            }
+
+            let currentSpeed = player.baseSpeed;
+            if (player.isDashing) {
+                currentSpeed = player.dashSpeed; player.dashDuration -= deltaTime;
+                spawnParticles(player.x + player.width/2, player.y + player.height, 1, "#00ffff"); 
+                if (player.dashDuration <= 0) player.isDashing = false;
+            }
+
+            const moveStep = currentSpeed * deltaTime;
+            let dx = 0, dy = 0;
+
+            if (keys.joyActive) { dx = keys.joyX * moveStep; dy = keys.joyY * moveStep; } 
+            else {
+                if (keys.up) dy = -moveStep; if (keys.down) dy = moveStep;
+                if (keys.left) dx = -moveStep; if (keys.right) dx = moveStep;
+            }
+            
+            if (level.effect === 'reversed') { dx = -dx; dy = -dy; }
+            if (keys.touch) doLucidTouch();
+            if (keys.dash) { doDash(); keys.dash = false; }
+
+            const nextX = player.x + dx; const nextY = player.y + dy;
+            if (!isWallCollision(nextX, player.y)) player.x = nextX;
+            if (!isWallCollision(player.x, nextY)) player.y = nextY;
+
+            updateWorldData(deltaTime);
+            updateParticles(deltaTime);
+            checkCollisions();
+            
+            // Interaction Target Logic
+            const cx = player.x + player.width / 2; const cy = player.y + player.height / 2;
+            const touchRadius = 100; game.interactionTarget = null; let bestDist = touchRadius;
+            
+            for (const obj of game.worldData) {
+                if (obj.isInteractable && !obj.isCollected) {
+                    const ox = obj.x + game.fixedTileSize / 2; const oy = obj.y + game.fixedTileSize / 2;
+                    const dist = Math.hypot(cx - ox, cy - oy);
+                    let bias = 0; if (oy > cy) bias = -15; 
+                    if (dist + bias < bestDist) { bestDist = dist + bias; game.interactionTarget = obj; }
+                }
+            }
+            
+            // Level Specific Logics
+            if (game.currentLevel === 2) {
+                game.heartTimer += deltaTime;
+                if (game.heartTimer > 6000) {
+                    game.heartTimer = 0;
+                    const hearts = game.worldData.filter(o => o.char === 'R' && o.trueForm === 'H' && !o.isCollected);
+                    const tombstones = game.worldData.filter(o => o.char === 'T');
+                    hearts.forEach(heart => {
+                        if (tombstones.length > 0) {
+                            const target = tombstones[Math.floor(Math.random() * tombstones.length)];
+                            heart.x = target.x; heart.y = target.y; spawnParticles(heart.x + 20, heart.y + 20, 15, "#ff0000");
+                        }
+                    });
+                }
+            }
+            if (level.title.includes("Mirrors")) {
+                game.mirrorHintTimer += deltaTime;
+                if (game.mirrorHintTimer > 2000) {
+                    game.mirrorHintTimer = 0;
+                    const starMirror = game.worldData.find(o => o.trueForm === 'S' && !o.isCollected);
+                    if (starMirror) { spawnParticles(starMirror.x + 20, starMirror.y + 20, 8, "#ffffaa"); }
+                }
+            }
+            if (level.type === 'drop_catch') {
+                game.supplyDropTimer += deltaTime;
+                if (game.supplyDropTimer > 2000) { 
+                    game.supplyDropTimer = 0;
+                    const dropX = Math.floor(Math.random() * 11) + 1; 
+                    game.worldData.push({ x: dropX * game.fixedTileSize, y: 60, char: 'A', emoji: '🥃', isMoving: true, isInteractable: true, vy: 0.1 });
+                }
+                game.worldData.forEach(obj => {
+                    if (obj.vy && !obj.isCollected) {
+                        obj.y += obj.vy * deltaTime;
+                        if (obj.y > canvas.height) { obj.isCollected = true; obj.emoji = ''; spawnText(obj.x, canvas.height-20, "Miss!", "#ff0000"); }
+                    }
+                });
+            }
+            
+            const targetCamX = player.x + (player.width / 2); const targetCamY = player.y + (player.height / 2);
+            game.camera.x += (targetCamX - game.camera.x) * 0.1; game.camera.y += (targetCamY - game.camera.y) * 0.1;
+            if (game.shake > 0) game.shake *= 0.9; if (game.shake < 0.5) game.shake = 0;
+        }
+        
+        function updateWorldData(deltaTime) {
+            const moveSpeed = (player.baseSpeed * 0.5) * deltaTime;
+            game.worldData.forEach(obj => {
+                // Ghost / Chaser Logic
+                if (obj.isMoving && obj.isChaser) {
+                    // Simple Chasing Logic
+                    const dx = player.x - obj.x; const dy = player.y - obj.y;
+                    const dist = Math.hypot(dx, dy);
+                    const speed = (moveSpeed * (obj.speedMult || 1));
+                    if (dist > 5) {
+                        obj.x += (dx / dist) * speed; obj.y += (dy / dist) * speed;
+                    }
+                }
+                else if (obj.isMoving && obj.isGhost) {
+                   if (!obj.dir) obj.dir = {x:1, y:0}; 
+                   obj.x += obj.dir.x * moveSpeed; obj.y += obj.dir.y * moveSpeed;
+                   if (isWallCollision(obj.x, obj.y, true)) {
+                       obj.x -= obj.dir.x * moveSpeed; obj.y -= obj.dir.y * moveSpeed;
+                       const dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
+                       obj.dir = dirs[Math.floor(Math.random()*dirs.length)];
+                   }
+                   if (Math.random() < 0.02) {
+                        const dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
+                        obj.dir = dirs[Math.floor(Math.random()*dirs.length)];
+                   }
+                } else if (obj.isMoving && obj.path) {
+                    const targetPos = obj.path[obj.currentPathIndex];
+                    const tx = targetPos.x * game.fixedTileSize; const ty = targetPos.y * game.fixedTileSize;
+                    const dist = Math.hypot(tx - obj.x, ty - obj.y);
+                    if (dist < moveSpeed) {
+                        obj.x = tx; obj.y = ty; obj.currentPathIndex = (obj.currentPathIndex + 1) % obj.path.length;
+                    } else if (dist > 0) {
+                        obj.x += ((tx - obj.x) / dist) * moveSpeed; obj.y += ((ty - obj.y) / dist) * moveSpeed;
+                    }
+                    const danger = game.dangers.find(d => d.worldData === obj);
+                    if (danger) { danger.x = obj.x; danger.y = obj.y; }
+                }
+            });
+        }
+
+        function getTileAt(x, y) {
+            const c = Math.floor(x / game.fixedTileSize); const r = Math.floor(y / game.fixedTileSize);
+            if (r >= 0 && r < game.levelMap.length && c >= 0 && c < game.levelMap[0].length) { return game.levelMap[r][c]; }
+            return null;
+        }
+        
+        function isWallCollision(x, y, isEmoji = false) {
+            let w = isEmoji ? game.fixedTileSize : player.width; let h = isEmoji ? game.fixedTileSize : player.height;
+            const footY = y + h - (game.fixedTileSize * 0.2);
+            const footLeft = x + (w * 0.2); const footRight = x + (w * 0.8);
+            const corners = [{x: footLeft, y: footY}, {x: footRight, y: footY}];
+            for (const c of corners) {
+                const tile = getTileAt(c.x, c.y);
+                if (!tile) return true; 
+                if (['#', 'm', 'M', 'v', 'J', 'S', 'O'].includes(tile.char)) return true;
+            }
+            return false;
+        }
+
+        function checkCollisions() {
+            const pRect = { x: player.x, y: player.y, width: player.width, height: player.height };
+            const level = levels[game.currentLevel];
+
+            // Dangers
+            for (const d of game.dangers) {
+                const dRect = { x: d.x+10, y: d.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
+                if (isRectCollision(pRect, dRect)) { gameOver("Caught!"); return; }
+            }
+            // Dynamic Dangers (Chasers)
+            game.worldData.forEach(obj => {
+                if (obj.isChaser && obj.char === level.danger) {
+                    const dRect = { x: obj.x+10, y: obj.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
+                    if (isRectCollision(pRect, dRect)) { gameOver("Caught by Ghost!"); return; }
+                }
+            });
+
+            if (level.type === 'drop_catch') {
+                for (const obj of game.worldData) {
+                    if (obj.vy && !obj.isCollected) {
+                         const itemRect = { x: obj.x, y: obj.y, width: 40, height: 40 };
+                         if (isRectCollision(pRect, itemRect)) { doLucidTouch(); game.interactionTarget = obj; doLucidTouch(); }
+                    }
+                }
+            }
+
+            for (let r = 0; r < game.levelMap.length; r++) {
+                for (let c = 0; c < game.levelMap[r].length; c++) {
+                    const obj = game.levelMap[r][c];
+                    if (obj.char === game.target) {
+                        const tRect = { x: obj.x, y: obj.y, width: game.fixedTileSize, height: game.fixedTileSize };
+                        if (isRectCollision(pRect, tRect)) {
+                            if (level.type === 'collect' || level.type === 'stealth_collect') {
+                                game.collected++; obj.char = '.'; obj.emoji = ''; spawnParticles(obj.x+20, obj.y+20, 10, "#ffff00"); spawnText(obj.x, obj.y, "+1", "#ffff00"); showHint(`Collected ${game.collected}/${game.targetCount}`);
+                                if (game.collected >= game.targetCount) nextLevel();
+                            } else if (level.type === 'find' || level.type === 'find_reversed') { nextLevel(); }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        
+        function isRectCollision(r1, r2) {
+            return r1.x < r2.x+r2.width && r1.x+r1.width > r2.x && r1.y < r2.y+r2.height && r1.y+r1.height > r2.y;
+        }
+
+        function draw() {
+            const level = levels[game.currentLevel];
+            
+            // Dynamic Background for Timer Levels
+            if (level.timeLimit && game.timeLeft !== undefined) {
+                const p = Math.max(0, game.timeLeft / level.timeLimit); // 1.0 to 0.0
+                // Orange (255, 165, 0) to Purple (75, 0, 130)
+                const r = Math.floor(75 + (255 - 75) * p);
+                const g = Math.floor(0 + (165 - 0) * p);
+                const b = Math.floor(130 + (0 - 130) * p);
+                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+            } else {
+                ctx.fillStyle = level.backgroundColor;
+            }
+            
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let sx = (Math.random() - 0.5) * game.shake * 10; let sy = (Math.random() - 0.5) * game.shake * 10;
+            ctx.save(); ctx.translate(canvas.width/2 + sx, canvas.height/2 + sy); ctx.translate(-game.camera.x, -game.camera.y);
+
+            ctx.fillStyle = "#ffffff"; ctx.font = `${game.fixedTileSize * 0.8}px 'Inter', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+            for (let r = 0; r < game.levelMap.length; r++) {
+                for (let c = 0; c < game.levelMap[r].length; c++) {
+                    const obj = game.levelMap[r][c];
+                    if (level.type === 'tile_light_up' && obj.char === 'F') {
+                        ctx.save();
+                        if (obj.active) { ctx.shadowBlur = 20; ctx.shadowColor = "#fff"; ctx.fillStyle = "rgba(255, 255, 200, 0.8)"; } else { ctx.fillStyle = "rgba(50, 50, 50, 0.5)"; }
+                        ctx.fillRect(obj.x+2, obj.y+2, game.fixedTileSize-4, game.fixedTileSize-4); ctx.restore();
+                    } 
+                    else if (level.type === 'drop_catch' && obj.char === 'G') { ctx.fillStyle = "#228B22"; ctx.fillRect(obj.x, obj.y, game.fixedTileSize, game.fixedTileSize); }
+                    else if (obj.emoji) { ctx.fillText(obj.emoji, obj.x+20, obj.y+20); }
+                }
+            }
+            
+            if (game.currentLevel === 2) {
+                game.worldData.forEach(obj => { if (obj.trueForm === 'H' && !obj.isCollected) { ctx.fillText(obj.display, obj.x+20, obj.y+15); } });
+                for (const obj of game.worldData) { if (obj.emoji && obj.trueForm !== 'H') { if(!obj.isCollected) ctx.fillText(obj.emoji, obj.x+20, obj.y+20); } }
+            } else {
+                for (const obj of game.worldData) {
+                    if (obj.emoji && !obj.isCollected) {
+                        if (obj.isInteractable) { ctx.shadowBlur = 15; ctx.shadowColor = "rgba(255, 255, 255, 0.5)"; }
+                        ctx.fillText(obj.emoji, obj.x+20, obj.y+20); ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            game.particles.forEach(p => p.draw(ctx));
+            drawPlayer();
+            game.floatingTexts.forEach(t => t.draw(ctx));
+
+            if (level.effect === 'hazy') { ctx.fillStyle = 'rgba(180, 180, 180, 0.3)'; ctx.fillRect(game.camera.x-canvas.width, game.camera.y-canvas.height, canvas.width*2, canvas.height*2); }
+            
+            ctx.restore(); 
+            
+            let grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 100, canvas.width/2, canvas.height/2, canvas.width);
+            grad.addColorStop(0, "rgba(0,0,0,0)"); grad.addColorStop(1, "rgba(0,0,0,0.6)");
+            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width, canvas.height);
+        }
+
+        function gameLoop(timestamp) {
+            if (!game.isGameRunning || game.isPaused) return;
+            const dt = timestamp - game.lastTime; game.lastTime = timestamp;
+            update(dt); draw(); requestAnimationFrame(gameLoop);
+        }
+        
+        function init() {
+            createPlayerTextures(); loadLevel(0);
+            function resize() { const c = document.getElementById('gameContainer'); canvas.width = c.clientWidth; canvas.height = c.clientHeight; draw(); }
+            window.addEventListener('resize', resize); resize();
+            levelStartButton.onclick = startGame; pauseButton.addEventListener('click', togglePause); menuButton.addEventListener('click', () => { togglePause(); openLevelSelect(); }); resumeButton.addEventListener('click', togglePause);
+            
+            const stick = document.getElementById('analogStick'); const knob = document.getElementById('stickKnob'); let drag = false; const maxDist = 35;
+            const handleMove = (clientX, clientY) => {
+                const rect = stick.getBoundingClientRect(); const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
+                let dx = clientX - centerX; let dy = clientY - centerY; let dist = Math.hypot(dx, dy);
+                if (dist > maxDist) { dx = (dx / dist) * maxDist; dy = (dy / dist) * maxDist; dist = maxDist; }
+                knob.style.transform = `translate(${dx}px, ${dy}px)`;
+                keys.joyActive = true; keys.joyX = dx / maxDist; keys.joyY = dy / maxDist;
+            };
+            stick.addEventListener('pointerdown', (e) => { drag = true; e.preventDefault(); handleMove(e.clientX, e.clientY); });
+            window.addEventListener('pointermove', (e) => { if (drag) { e.preventDefault(); handleMove(e.clientX, e.clientY); } });
+            const endDrag = () => { drag = false; keys.joyActive = false; keys.joyX = 0; keys.joyY = 0; knob.style.transform = `translate(0px, 0px)`; };
+            window.addEventListener('pointerup', endDrag); window.addEventListener('pointercancel', endDrag);
+
+            const bindBtn = (id, k) => {
+                const el = document.getElementById(id);
+                el.addEventListener('pointerdown', (e) => { e.preventDefault(); keys[k] = true; });
+                el.addEventListener('pointerup', (e) => { e.preventDefault(); keys[k] = false; });
+                el.addEventListener('pointerleave', (e) => { e.preventDefault(); keys[k] = false; });
+            };
+            bindBtn('lucidTouchButton', 'touch'); bindBtn('dashButton', 'dash');
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { togglePause(); return; }
+                switch(e.key) { case 'ArrowUp': case 'w': case 'W': keys.up = true; break; case 'ArrowDown': case 's': case 'S': keys.down = true; break; case 'ArrowLeft': case 'a': case 'A': keys.left = true; break; case 'ArrowRight': case 'd': case 'D': keys.right = true; break; case 'e': case 'E': keys.touch = true; break; case ' ': keys.dash = true; break; }
+            });
+            window.addEventListener('keyup', (e) => {
+                switch(e.key) { case 'ArrowUp': case 'w': case 'W': keys.up = false; break; case 'ArrowDown': case 's': case 'S': keys.down = false; break; case 'ArrowLeft': case 'a': case 'A': keys.left = false; break; case 'ArrowRight': case 'd': case 'D': keys.right = false; break; case 'e': case 'E': keys.touch = false; break; case ' ': keys.dash = false; break; }
+            });
+            document.body.addEventListener('touchstart', (e) => { if (e.target.closest('#mobileControls')) e.preventDefault(); }, { passive: false });
+        }
+        init();
+    </script>
+</body>
+</html>
