@@ -4,184 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dream Hopper: Badman Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            background: #111;
-            color: #fff;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        #gameContainer {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            max-width: 800px;
-            max-height: 600px;
-            overflow: hidden;
-            background: #000;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-        }
-
-        #gameCanvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* UI Overlays */
-        .ui-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center; pointer-events: none;
-            color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            padding: 20px; box-sizing: border-box;
-            background: rgba(0, 0, 0, 0.85); z-index: 20;
-        }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: #111; color: #fff; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; touch-action: none; user-select: none; -webkit-user-select: none; }
+        #gameContainer { position: relative; width: 100vw; height: 100vh; max-width: 800px; max-height: 600px; overflow: hidden; background: #000; box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+        #gameCanvas { display: block; width: 100%; height: 100%; }
+        .ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; pointer-events: none; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); padding: 20px; box-sizing: border-box; background: rgba(0, 0, 0, 0.85); z-index: 20; }
         
-        /* Top HUD Bar */
-        #hudBar {
-            position: absolute; top: 0; left: 0; width: 100%;
-            display: flex; flex-direction: column; align-items: center;
-            padding: 10px; box-sizing: border-box; pointer-events: none;
-            z-index: 10; gap: 5px;
-        }
+        /* Title Screen Specifics */
+        #titleScreen { background: linear-gradient(135deg, #1a0b2e 0%, #000000 100%); pointer-events: auto; }
+        #titleScreen h1 { font-size: 3.5rem; margin: 0; background: linear-gradient(to right, #ff00cc, #3333ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 0px 20px rgba(255, 0, 204, 0.3); font-weight: 900; letter-spacing: 2px; }
+        #titleScreen h2 { font-size: 1.2rem; color: #aaa; margin-top: 5px; margin-bottom: 30px; letter-spacing: 4px; text-transform: uppercase; }
+        #titleCanvas { width: 128px; height: 256px; margin-bottom: 30px; image-rendering: pixelated; }
 
-        #topRow {
-            display: flex; width: 100%; justify-content: space-between; align-items: center;
-        }
-
-        #levelIndicator {
-            font-weight: bold; color: #aaa; font-size: 0.9rem;
-            background: rgba(0,0,0,0.5); padding: 2px 8px;
-            border-radius: 10px; margin-bottom: 2px;
-        }
-        
-        #timerDisplay {
-            font-weight: bold; color: #ff4444; font-size: 1.5rem;
-            text-shadow: 0 0 10px #ff0000; display: none;
-        }
-
-        #lyricClueBox {
-            background: rgba(0, 0, 0, 0.6); padding: 8px 15px;
-            border-radius: 20px; font-size: 0.9rem; font-style: italic;
-            color: #ffcc00; backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 204, 0, 0.2); text-align: center;
-        }
-
-        #inventoryBox {
-            display: flex; gap: 5px; background: rgba(0,0,0,0.6);
-            padding: 5px 10px; border-radius: 15px; min-height: 30px;
-            backdrop-filter: blur(4px);
-        }
-
-        /* Level Intro Screen */
+        #hudBar { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; pointer-events: none; z-index: 10; gap: 5px; }
+        #topRow { display: flex; width: 100%; justify-content: space-between; align-items: center; }
+        #levelIndicator { font-weight: bold; color: #aaa; font-size: 0.9rem; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px; margin-bottom: 2px; }
+        #timerDisplay, #livesDisplay, #moneyDisplay { font-weight: bold; font-size: 1.5rem; display: none; margin-right: 15px; }
+        #timerDisplay { color: #ff4444; text-shadow: 0 0 10px #ff0000; }
+        #livesDisplay { color: #CD853F; text-shadow: 0 0 10px #8B4513; }
+        #moneyDisplay { color: #00ff00; text-shadow: 0 0 10px #006400; }
+        #lyricClueBox { background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 20px; font-size: 0.9rem; font-style: italic; color: #ffcc00; backdrop-filter: blur(4px); border: 1px solid rgba(255, 204, 0, 0.2); text-align: center; }
+        #inventoryBox { display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px 10px; border-radius: 15px; min-height: 30px; backdrop-filter: blur(4px); }
         #levelIntro { pointer-events: auto; background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,20,60,0.95)); }
         #levelIntro h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #ffcc00; text-shadow: 0 0 10px rgba(255, 204, 0, 0.5); }
         #levelIntro p { font-size: 1.2rem; color: #eee; margin-bottom: 1.5rem; max-width: 80%; }
-        
-        .instructions {
-            font-size: 0.9rem !important; color: #aaa !important;
-            margin-bottom: 2rem !important; line-height: 1.6;
-            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;
-        }
-
-        .menu-button {
-            background-color: #6a0dad; color: white; border: none;
-            padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold;
-            border-radius: 12px; cursor: pointer; transition: all 0.2s ease;
-            pointer-events: auto; text-transform: uppercase;
-            letter-spacing: 1px; box-shadow: 0 4px 0 #4b0082;
-        }
+        .instructions { font-size: 0.9rem !important; color: #aaa !important; margin-bottom: 2rem !important; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
+        .menu-button { background-color: #6a0dad; color: white; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; pointer-events: auto; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 0 #4b0082; }
         .menu-button:hover { background-color: #8a2be2; transform: translateY(-2px); box-shadow: 0 6px 0 #4b0082; }
         .menu-button:active { transform: translateY(2px); box-shadow: 0 0 0 #4b0082; }
-
         #pauseMenu { z-index: 30; }
         #levelSelectScreen { background: rgba(0,0,0,0.95); z-index: 40; padding: 40px; overflow-y: auto; }
-        
-        #levelGrid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 15px; width: 100%; max-width: 600px; margin-top: 20px;
-        }
-        
-        .level-btn {
-            background: #333; color: #fff; border: 2px solid #555;
-            border-radius: 10px; padding: 15px; font-size: 1.2rem;
-            cursor: pointer; pointer-events: auto;
-        }
+        #levelGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 15px; width: 100%; max-width: 600px; margin-top: 20px; }
+        .level-btn { background: #333; color: #fff; border: 2px solid #555; border-radius: 10px; padding: 15px; font-size: 1.2rem; cursor: pointer; pointer-events: auto; }
         .level-btn:hover { background: #444; }
         .level-btn.locked { opacity: 0.3; cursor: not-allowed; border-color: #333; }
         .level-btn.active { border-color: #ffcc00; color: #ffcc00; }
-
-        .hud-btn {
-            pointer-events: auto; background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3); width: 40px; height: 40px;
-            border-radius: 50%; font-size: 1rem; font-weight: bold; color: #fff;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(4px); margin-left: 10px;
-        }
-
-        #hintMessage {
-            position: absolute; bottom: -60px; left: 50%;
-            transform: translateX(-50%); background: rgba(0, 0, 0, 0.85);
-            padding: 12px 24px; border-radius: 30px; font-size: 1rem;
-            transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 15; white-space: nowrap; border: 1px solid rgba(255,204,0,0.3);
-            color: #ffcc00;
-        }
+        .level-btn.unlocked-cheat { border-color: #00ffff; box-shadow: 0 0 10px #00ffff; }
+        .hud-btn { pointer-events: auto; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); width: 40px; height: 40px; border-radius: 50%; font-size: 1rem; font-weight: bold; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); margin-left: 10px; }
+        #hintMessage { position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 12px 24px; border-radius: 30px; font-size: 1rem; transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 15; white-space: nowrap; border: 1px solid rgba(255,204,0,0.3); color: #ffcc00; }
         #hintMessage.show { bottom: 100px; }
-
-        #mobileControls {
-            position: absolute; bottom: 20px; left: 20px;
-            width: calc(100% - 40px); height: 140px;
-            justify-content: space-between; align-items: flex-end;
-            z-index: 15; pointer-events: none; display: none; 
-        }
-        
-        @media (hover: none) and (pointer: coarse), (max-width: 768px) {
-            #mobileControls { display: flex; }
-            #hintMessage.show { bottom: 180px; }
-        }
-
-        #analogStick {
-            width: 120px; height: 120px;
-            background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%; position: relative; pointer-events: auto;
-            backdrop-filter: blur(4px);
-        }
-
-        #stickKnob {
-            width: 50px; height: 50px; background: rgba(255, 204, 0, 0.8);
-            border-radius: 50%; position: absolute; top: 35px; left: 35px;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); pointer-events: none; 
-            transition: transform 0.1s;
-        }
-        
+        #mobileControls { position: absolute; bottom: 20px; left: 20px; width: calc(100% - 40px); height: 140px; justify-content: space-between; align-items: flex-end; z-index: 15; pointer-events: none; display: none; }
+        @media (hover: none) and (pointer: coarse), (max-width: 768px) { #mobileControls { display: flex; } #hintMessage.show { bottom: 180px; } }
+        #analogStick { width: 120px; height: 120px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 50%; position: relative; pointer-events: auto; backdrop-filter: blur(4px); }
+        #stickKnob { width: 50px; height: 50px; background: rgba(255, 204, 0, 0.8); border-radius: 50%; position: absolute; top: 35px; left: 35px; box-shadow: 0 0 10px rgba(255, 204, 0, 0.5); pointer-events: none; transition: transform 0.1s; }
         .action-group { display: flex; gap: 20px; align-items: center; padding-bottom: 10px; }
-
-        .round-btn {
-            width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem;
-            pointer-events: auto; display: flex; justify-content: center;
-            align-items: center; backdrop-filter: blur(4px);
-        }
-
+        .round-btn { width: 70px; height: 70px; border-radius: 50%; font-size: 1.8rem; pointer-events: auto; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         #dashButton { border: 2px solid rgba(0, 255, 255, 0.5); color: #00ffff; background: rgba(0,0,0,0.3); }
-        #lucidTouchButton {
-            width: 80px; height: 80px; border: 2px solid rgba(255, 204, 0, 0.5);
-            color: #ffcc00; background: rgba(0,0,0,0.3); font-size: 2.2rem;
-        }
+        #lucidTouchButton { width: 80px; height: 80px; border: 2px solid rgba(255, 204, 0, 0.5); color: #ffcc00; background: rgba(0,0,0,0.3); font-size: 2.2rem; }
         .round-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
         .hidden { display: none !important; }
     </style>
@@ -191,23 +61,35 @@
     <div id="gameContainer">
         <canvas id="gameCanvas"></canvas>
 
+        <!-- Title Screen -->
+        <div id="titleScreen" class="ui-overlay">
+            <h1>DREAM HOPPER</h1>
+            <h2>Badman Edition</h2>
+            <canvas id="titleCanvas" width="64" height="128"></canvas>
+            <button id="enterDreamButton" class="menu-button">Enter Dream</button>
+        </div>
+
         <!-- Top HUD -->
         <div id="hudBar">
             <div id="topRow">
                 <div id="inventoryBox"></div>
-                <div id="timerDisplay">12.00</div>
+                <div style="display: flex; align-items: center;">
+                    <div id="livesDisplay"></div>
+                    <div id="moneyDisplay">💰 0</div>
+                    <div id="timerDisplay">12.00</div>
+                </div>
                 <div style="display:flex;">
                     <button id="menuButton" class="hud-btn hidden">☰</button>
                     <button id="pauseButton" class="hud-btn hidden">||</button>
                 </div>
             </div>
-            <div id="levelIndicator">Level 1 / 12</div>
+            <div id="levelIndicator">Level 1 / 18</div>
             <div id="lyricClueBox" class="hidden"></div>
         </div>
 
         <div id="hintMessage"></div>
 
-        <div id="levelIntro" class="ui-overlay">
+        <div id="levelIntro" class="ui-overlay hidden">
             <h1 id="levelTitle"></h1>
             <p id="levelObjective"></p>
             <p id="levelInstructions" class="instructions">
@@ -231,9 +113,9 @@
         </div>
 
         <div id="endScreen" class="ui-overlay hidden">
-            <h1 style="color: #ffcc00;">You have awakened.</h1>
-            <p>You made it through the subconscious.</p>
-            <div style="font-size:3rem; margin:10px;">☀️</div>
+            <h1 style="color: #ffcc00;">A New Dream</h1>
+            <div style="font-size: 4rem; margin: 10px;">🥐📺</div>
+            <p style="font-style: italic;">Finally... You've awakened to the truth: Dreams Never Die, Unless You Let Them</p>
             <button onclick="location.reload()" class="menu-button" style="margin-top:20px;">Sleep Again</button>
         </div>
 
@@ -266,14 +148,39 @@
         const hintMessage = document.getElementById('hintMessage');
         const mobileControls = document.getElementById('mobileControls');
         const timerDisplay = document.getElementById('timerDisplay');
+        const livesDisplay = document.getElementById('livesDisplay');
+        const moneyDisplay = document.getElementById('moneyDisplay');
+        
+        // Title Screen Elements
+        const titleScreen = document.getElementById('titleScreen');
+        const titleCanvas = document.getElementById('titleCanvas');
+        const titleCtx = titleCanvas.getContext('2d');
+        const enterDreamButton = document.getElementById('enterDreamButton');
+        let titleAnimId;
+
+        // --- GLOBAL LEGEND (Defaults) ---
+        const GLOBAL_EMOJIS = {
+            '#': '🧱', 'P': '', ' ': '', '.': '',
+            'W': '🧱', 
+            'B': '🛏️', 'L': '💡', 'C': '🥐', 'M': '☁️', 'H': '❤️', 'R': '🪨',
+            'm': '🪞', 'E': '👁️', 'J': '🎃', 'G': '👻', 'c': '🐈‍⬛', 'b': '🦇',
+            'k': '🚗', 'F': '🐠', 'Z': '🦀', 'T': '🐢', 'O': '🐙', 'N': '🌰',
+            'S': '🌊', 'A': '🥃', 'U': '🏖️', 'Y': '✔️', 'No': '❌',
+            'd': '💎', '$': '💰', 'p': '📈', 'i': '🏢', 'h': '🏦', 'w': '💼',
+            'v': '✨', '8': '∞', 'z': '🧘', 'X': '🚁', 'g': '👓', 'o': '👵',
+            's': '🛥️', 'e': '🎖️', 'y': '🍬', 'V': '🦇', 'K': '🚓', 'Q': '🐿️',
+            '|': '', ':': '', 'f': '👨‍👩‍👧‍👦', 'n': '👧', 'z': '💤', 'D': '👿'
+        };
 
         // --- Game State ---
         let game = {
             currentLevel: 0,
             maxLevelReached: 0,
+            lucidModeUnlocked: false,
             fixedTileSize: 40,
             isGameRunning: false,
             isPaused: false,
+            isLevelTransitioning: false,
             levelMap: [],    
             worldData: [],   
             dangers: [],
@@ -283,8 +190,14 @@
             target: null,
             targetCount: 0,
             collected: 0,
-            timeLeft: 0, // For time limit levels
+            moneyCollected: 0,
+            officeClicks: 0,
+            investedStar: 0,
+            investedHouse: 0,
+            levelCleared: false,
+            timeLeft: 0, 
             inventory: [],
+            lives: 3,
             lastTime: 0,
             camera: { x: 0, y: 0, lerp: 0.1 },
             interactionTarget: null,
@@ -304,11 +217,13 @@
             baseSpeed: 0.25, 
             dashSpeed: 0.7,
             isDashing: false, dashCooldown: 0, dashDuration: 0,
+            isSpinning: false, spinAngle: 0, spinTimer: 0, invulnerable: false,
             runFrame1: null, runFrame2: null, currentFrame: 1, lastFrameTime: 0,
-            outfit: 'normal', facing: {x: 0, y: 1} 
+            outfit: 'normal', facing: {x: 0, y: 1}, scale: 1
         };
 
         let keys = { up: false, down: false, left: false, right: false, touch: false, dash: false, joyX: 0, joyY: 0, joyActive: false };
+        let cheatCodeBuffer = "";
 
         // --- Visual FX System (Moved Up) ---
         class Particle {
@@ -368,26 +283,32 @@
                 title: "Dream 1: Insomnia", objective: "Turn off the light (💡) then find your Bed (🛏️).", hint: "The light needs to go out before you can sleep.", lyric: "i aint really been sleep... since the last time i woke up",
                 type: 'tutorial', target: 'B', backgroundColor: '#191970',
                 map: ["#########", "#P......#", "#.......#", "#.L.....#", "#.......#", "#....B..#", "#########"],
-                worldData: [{ x: 2, y: 3, char: 'L', isInteractable: true, isHidden: false, trueForm: '🌑', isLightOn: true, display: '💡' }, { x: 5, y: 5, char: 'B', isInteractable: true, isHidden: false, trueForm: '🛏️', isBed: true, display: '🛏️' }]
+                worldData: [{ x: 2, y: 3, char: 'L', isInteractable: true, isHidden: false, trueForm: '🌑', isLightOn: true, display: '💡' }, { x: 5, y: 5, char: 'B', isInteractable: true, isHidden: false, trueForm: '🛏️', isBed: true, display: '🛏️' }],
+                customLegend: { 'L': '💡' } 
             },
             {
                 title: "Dream 2: Sweet Dream", objective: "Collect all 5 cronuts!", hint: "Just walk over the croissants to eat them!", lyric: "last time i had a sweet dream i was eating Cronuts,",
                 type: 'collect', target: 'C', backgroundColor: '#87CEEB',
-                map: ["MMMMMMMMMMMMMMM", "M.C.......W..CM", "M.....P.......M", "M.W.......C...M", "M......M......M", "M.C.......M.W.M", "M....W..M....CM", "M.........C...M", "M.W....M.W....M", "MMMMMMMMMMMMMMM"]
+                map: ["MMMMMMMMMMMMMMM", "M.C.......W..CM", "M.....P.......M", "M.W.......C...M", "M......M......M", "M.C.......M.W.M", "M....W..M....CM", "M.........C...M", "M.W....M.W....M", "MMMMMMMMMMMMMMM"],
+                customLegend: { 'C': '🥐', 'M': '☁️', 'W': '💨' }
             },
             {
                 title: "Dream 3: Dying for Love", objective: "Collect 3 Hearts! They move every 6s.", hint: "Look behind the tombstones.", lyric: "last time i had a nightmare, i was dying for love,",
                 type: 'lucid_find', target: 'H', danger: 'G', backgroundColor: '#1a0000',
-                map: ["###########", "#T.....T..#", "#.........#", "#T..P..T..#", "#.........#", "#T.....T..#", "#.........#", "###########"],
-                worldData: [{ x: 1, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 7, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 4, y: 5, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 1, y: 3, char: 'T', isInteractable: false, display: '🪦' }, { x: 7, y: 3, char: 'T', isInteractable: false, display: '🪦' }, { x: 1, y: 5, char: 'T', isInteractable: false, display: '🪦' }, { x: 7, y: 5, char: 'T', isInteractable: false, display: '🪦' }, { x: 8, y: 2, char: 'G', isMoving: true, path: [{x:8,y:2},{x:2,y:2}], display: '👻' }, { x: 2, y: 6, char: 'G', isMoving: true, path: [{x:2,y:6},{x:2,y:2}], display: '👿' }, { x: 8, y: 6, char: 'G', isMoving: true, path: [{x:8,y:6},{x:8,y:2}], display: '👿' }]
+                map: ["###########", "#t.....t..#", "#.........#", "#t..P..t..#", "#.........#", "#t.....t..#", "#.........#", "###########"],
+                worldData: [{ x: 1, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 7, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 4, y: 5, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 1, y: 3, char: 't', isInteractable: false, display: '🪦' }, { x: 7, y: 3, char: 't', isInteractable: false, display: '🪦' }, { x: 1, y: 5, char: 't', isInteractable: false, display: '🪦' }, { x: 7, y: 5, char: 't', isInteractable: false, display: '🪦' }, { x: 8, y: 2, char: 'G', isMoving: true, path: [{x:8,y:2},{x:2,y:2}], display: '👻' }, { x: 2, y: 6, char: 'G', isMoving: true, path: [{x:2,y:6},{x:2,y:2}], display: '👿' }, { x: 8, y: 6, char: 'G', isMoving: true, path: [{x:8,y:6},{x:8,y:2}], display: '👿' }],
+                customLegend: { 't': '🪦' }
             },
             {
                 title: "Dream 4: Astral Rising", objective: "Reach the Astral Form (✨) at the top!", hint: "Dodge the demons and head North.", lyric: "fighting for my life astral body rising above,",
                 type: 'lucid_find', target: 'v', danger: 'D', backgroundColor: '#220033', 
-                map: ["########", "#.v....#", "########", "#......#", "#.D..D.#", "#......#", "#.D..D.#", "#......#", "#.P....#", "########"],
-                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'D', isMoving: true, path: [{x:2,y:4},{x:5,y:4}], display: '👿' }, { x: 5, y: 6, char: 'D', isMoving: true, path: [{x:5,y:6},{x:2,y:6}], display: '👿' }]
+                // Walls are 'Z' (Sleep Zs), Moving enemies are 'D' (Demons)
+                map: ["BBBBBBBB", "B.v....B", "BBBBBBBB", "B......B", "B.Z..Z.B", "B......B", "B.Z..Z.B", "B......B", "B.P....B", "BBBBBBBB"],
+                customLegend: { 'Z': '💤', 'B': '🛏️', 'D': '👿' },
+                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'M', isMoving: true, path: [{x:1,y:4},{x:6,y:4}], display: '👿' }, { x: 5, y: 6, char: 'M', isMoving: true, path: [{x:6,y:6},{x:1,y:6}], display: '👿' }]
             },
-            {
+             // ... [Other levels with their specific legends or relying on globals] ...
+             {
                 title: "Dream 5: Mirrors", objective: "Interact (✨) with mirrors! Find the Star (⭐).", hint: "Watch closely. The correct mirror sparkles occasionally.", lyric: "seeing things that i never seen,",
                 type: 'lucid_find', target: 'S', backgroundColor: '#E6E8FA',
                 map: ["#############", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#.....P.....#", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#############"], worldData: [] 
@@ -401,14 +322,16 @@
             {
                 title: "Dream 7: Billie Jean", objective: "Light up 10 Tiles! Dodge Billie Jean.", hint: "Interact with the glowing tile. Watch out for girls!", lyric: "BMs like Billie Jean",
                 type: 'tile_light_up', outfit: 'mj', danger: 'W', backgroundColor: '#000000',
-                map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF", "FFFFFFFF"],
-                worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃' }]
+                map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF"], 
+                worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃' }],
+                customLegend: { 'F': '💃🏽' }
             },
             {
                 title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses falling from the NASA chute!", hint: "Stay inside the dome. Catch the glasses before they break.", lyric: "underseas drinking brandy... like i’m Sandy",
                 type: 'drop_catch', target: 'A', danger: 'Q', backgroundColor: '#1E90FF', 
                 map: ["OOOOOOOOOOOOO", "O...........O", "O...AAAAA...O", "O.G.G.G.G.G.O", "O.G.G.G.G.G.O", "O.G.G.T.G.G.O", "O.G.G.G.G.G.O", "O.....P.....O", "OOOOOOOOOOOOO"],
-                worldData: [{ x: 6, y: 5, char: 'T', isInteractable: false, display: '🌳' }, { x: 2, y: 6, char: 'Q', isMoving: true, path: [{x:2,y:6},{x:10,y:6},{x:10,y:4},{x:2,y:4}], display: '🐿️' }]
+                worldData: [{ x: 6, y: 5, char: 'T', isInteractable: false, display: '🌳' }, { x: 2, y: 6, char: 'Q', isMoving: true, path: [{x:2,y:6},{x:10,y:6},{x:10,y:4},{x:2,y:4}], display: '🐿️' }],
+                customLegend: { 'O': '🔮', 'G': '🌳' }
             },
             {
                 title: "Dream 9: Hard Knock Life", objective: "Help Annie. Find a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "Collect all 3 items then return to the girl.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
@@ -422,48 +345,138 @@
                 objective: "Save candy from 6 houses! Kids arrive in 12s!",
                 hint: "Watch out for the Jackolantern-Joker-Ghost!",
                 lyric: "takin my sweet time like a badman taking some candy,",
-                type: 'stealth_collect',
-                target: 'y', // Candy
-                danger: 'J', // Joker Ghost
-                outfit: 'batman',
-                backgroundColor: '#FFA500', // Dynamic change in update
-                timeLimit: 12, // 12 Seconds!
-                map: [
-                    "................",
-                    ".HH..........HH.",
-                    "H...y......y...H",
-                    "H..y........y..H",
-                    "....y......y....",
-                    "................",
-                    "H......P.......H", 
-                    "H..y........y..H",
-                    ".HH..........HH.",
-                    "................"
-                ],
+                type: 'stealth_collect', target: 'y', danger: 'J', outfit: 'batman', backgroundColor: '#FFA500', timeLimit: 12,
+                map: ["................", ".HH..........HH.", "H...y......y...H", "H..y........y..H", "....y......y....", "................", "H......P.......H", "H..y........y..H", ".HH..........HH.", "................"],
+                worldData: [{ x: 8, y: 4, char: 'J', isMoving: true, isChaser: true, speedMult: 0.6, display: '🎃' }, { x: 1, y: 1, char: 'H', display: '🏠' }, { x: 14, y: 1, char: 'H', display: '🏠' }, { x: 0, y: 3, char: 'H', display: '🏠' }, { x: 15, y: 3, char: 'H', display: '🏠' }, { x: 0, y: 6, char: 'H', display: '🏠' }, { x: 15, y: 6, char: 'H', display: '🏠' }, { x: 1, y: 8, char: 'H', display: '🏠' }, { x: 14, y: 8, char: 'H', display: '🏠' }],
+                customLegend: { 'H': '🏘️' }
+            },
+            {
+                title: "Dream 11: Crazy Driver",
+                objective: "Drive against the Crazy Mamas! Reach the 🏁.",
+                lyric: "takin' my sweet time like a Batman takin' some candy...",
+                type: 'car_runner', target: 'X', outfit: 'car', danger: 'M', hint: "Avoid the oncoming drivers! Hit Mamas = Spin out!", backgroundColor: '#333333',
+                map: ["|...:...:...:...|","|...:..X:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...: P :...|","|...:...:...:...|"],
                 worldData: [
-                    // The Joker-Ghost (J)
-                    { x: 8, y: 4, char: 'J', isMoving: true, isChaser: true, speedMult: 0.6, display: '🎃' },
-                    // House Graphics (Static)
-                    { x: 1, y: 1, char: 'H', display: '🏠' }, { x: 14, y: 1, char: 'H', display: '🏠' },
-                    { x: 0, y: 3, char: 'H', display: '🏠' }, { x: 15, y: 3, char: 'H', display: '🏠' },
-                    { x: 0, y: 6, char: 'H', display: '🏠' }, { x: 15, y: 6, char: 'H', display: '🏠' },
-                    { x: 1, y: 8, char: 'H', display: '🏠' }, { x: 14, y: 8, char: 'H', display: '🏠' }
+                     { x: 3, y: 1, char: 'Z', display: '🏁' }, { x: 2, y: 1, char: 'Z', display: '🌠' }, { x: 4, y: 1, char: 'Z', display: '💃🏾' }, { x: 5, y: 1, char: 'Z', display: '💎' }, { x: 3, y: 1, char: 'X', isInteractable: true, display: ' ', trueForm: 'X' },
+                     { x: 1, y: 5, char: 'M', isMoving: true, path: [{x:1,y:5},{x:1,y:25}], display: '🙎🏽‍♀️', speedMult: 1.5 }, { x: 1, y: 15, char: 'M', isMoving: true, path: [{x:1,y:15},{x:1,y:25}], display: '👩🏽‍🍼', speedMult: 1.8 },
+                     { x: 5, y: 8, char: 'M', isMoving: true, path: [{x:5,y:8},{x:5,y:25}], display: '👵🏾', speedMult: 1.2 }, { x: 5, y: 20, char: 'M', isMoving: true, path: [{x:5,y:20},{x:5,y:25}], display: '🙎🏽‍♀️', speedMult: 2.0 },
+                     { x: 9, y: 4, char: 'M', isMoving: true, path: [{x:9,y:4},{x:9,y:25}], display: '👩🏽‍🍼', speedMult: 1.6 }, { x: 9, y: 12, char: 'M', isMoving: true, path: [{x:9,y:12},{x:9,y:25}], display: '👵🏾', speedMult: 1.3 },
+                     { x: 13, y: 7, char: 'M', isMoving: true, path: [{x:13,y:7},{x:13,y:25}], display: '🙎🏽‍♀️', speedMult: 1.9 }, { x: 13, y: 18, char: 'M', isMoving: true, path: [{x:13,y:18},{x:13,y:25}], display: '👩🏽‍🍼', speedMult: 1.4 },
                 ]
             },
             {
-                title: "Dream 11: To Be Continued...",
-                objective: "You have survived the night.",
-                hint: "More levels coming soon.",
-                lyric: "LEVEL 12... TBC",
-                type: 'tutorial', 
-                target: 'X', 
-                backgroundColor: '#000000',
-                map: ["..........", "..........", "....P.....", "..........", ".........."],
-                worldData: []
+                title: "Dream 12: The Eye Test",
+                objective: "Lead Granny 👵 through the E-Y-E-S-I-G-H-T path!",
+                lyric: "won't change even when she's 80, and her eyesight gets hazy...",
+                type: 'lucid_find', target: 'g', hint: "Walk through the letters spelling EYESIGHT.", backgroundColor: '#708090', effect: 'hazy',
+                customLegend: { 'A':'A', 'B':'B', 'C':'C', 'D':'D', 'E':'E', 'F':'F', 'G':'G', 'H':'H', 'I':'I', 'J':'J', 'K':'K', 'L':'L', 'M':'M', 'N':'N', 'O':'O', 'P':'P', 'Q':'Q', 'R':'R', 'S':'S', 'T':'T', 'U':'U', 'V':'V', 'W':'W', 'X':'X', 'Y':'Y', 'Z':'Z' },
+                map: [
+                    "XXXXXXXXXXXXXXXXXXX",
+                    "X@..R..T..W..U..A.X", 
+                    "XY..B..C..D..F..J.X", // E-Y path continues
+                    "XE..Q..I..G..H..K.X", // E-S-I-G-H
+                    "XS..P..L..O..T..M.X", // T
+                    "XK..Z..V..N..g..R.X", // g
+                    "XXXXXXXXXXXXXXXXXXX"
+                ],
+                 worldData: [
+                    { x: 1, y: 1, char: 'X', isMoving: true, isChaser: true, speedMult: 0.9, display: '👵🏾' }, 
+                    { x: 13, y: 5, char: 'g', isInteractable: true, isGate: false, display: '👓', trueForm: 'g' }, // Goal needs trueForm
+                ],
+            },
+            {
+                title: "Dream 13: Navy Waves",
+                objective: "Dodge the waves 🌊! Find the 📺.",
+                lyric: "like the ocean waves to the Navy, girl I'm used to getting wavy...",
+                type: 'lucid_find', target: 'e', hint: "Wait for the gaps in the waves. Cross safely.", backgroundColor: '#000080', 
+                map: ["SSSSSSSSSS", "S...e....S", "S........S", "S........S", "S........S", "S........S", "S...P....S", "SSSSSSSSSS"],
+                worldData: [
+                     { x: 4, y: 1, char: 'e', isInteractable: true, trueForm: 'e', display: '📺' }, 
+                     { x: 1, y: 2, char: 'W', isMoving: true, path: [{x:1,y:2},{x:8,y:2}], display: '🌊', speedMult: 0.8 }, { x: 5, y: 2, char: 'W', isMoving: true, path: [{x:5,y:2},{x:1,y:2}], display: '🌊', speedMult: 0.8 },
+                     { x: 8, y: 3, char: 'W', isMoving: true, path: [{x:8,y:3},{x:1,y:3}], display: '🌊', speedMult: 1.2 }, { x: 3, y: 3, char: 'W', isMoving: true, path: [{x:3,y:3},{x:8,y:3}], display: '🌊', speedMult: 1.2 },
+                     { x: 1, y: 4, char: 'W', isMoving: true, path: [{x:1,y:4},{x:8,y:4}], display: '🌊', speedMult: 1.5 }, { x: 4, y: 4, char: 'W', isMoving: true, path: [{x:4,y:4},{x:1,y:4}], display: '🌊', speedMult: 1.5 },
+                ],
+                danger: 'W',
+                customLegend: { 'W': '🌊' }
+            },
+            {
+                title: "Dream 14: Sacred",
+                objective: "Is it yes or no?",
+                lyric: "yes or no not a maybe, gotta make sure cuz its sacred,",
+                type: 'lucid_choice',
+                hint: "Is life a choice?",
+                backgroundColor: '#FFFFFF', 
+                map: ["WWWWWWWWWWWW", "W..........W", "W....P.....W", "W..........W", "W....?.....W", "W..........W", "W.Y......N.W", "WWWWWWWWWWWW"],
+                worldData: [ { x: 2, y: 6, char: 'Y', isInteractable: true, trueForm: 'S', display: '✔️' }, { x: 9, y: 6, char: 'N', isInteractable: true, trueForm: 'D', display: '❌' } ]
+            },
+            {
+                title: "Dream 15: No Faking",
+                objective: "Find the real diamond.",
+                lyric: "not a big fan of faking,",
+                type: 'lucid_find', target: 'd', hint: "Most of these diamonds are fake. Keep checking.", backgroundColor: '#FFD700', 
+                map: ["WWWWWWWWWWWW", "W.d....P...W", "W..........W", "W....d.....W", "W..........W", "W.d.....d..W", "WWWWWWWWWWWW"],
+                 worldData: [
+                    { x: 2, y: 1, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' }, { x: 5, y: 3, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
+                    { x: 2, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'd', display: '💎' }, { x: 8, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
+                ]
+            },
+            {
+                title: "Dream 16: Big Plans",
+                objective: "Work -> Bank -> Home -> Invest.",
+                lyric: "gotta lotta big plans i been making, and big bands im creating,",
+                type: 'investment_run', target: 'S', hint: "Click Office 3x -> Click Bank Money -> Invest", backgroundColor: '#228B22', 
+                map: ["WWWWWWWWWWWW", "W.O........W", "W..........W", "W...P......W", "W..........W", "W.B......H.W", "W..........W", "W....I.....W", "WWWWWWWWWWWW"],
+                 worldData: [
+                     { x: 2, y: 1, char: 'O', isInteractable: true, display: '🏢', type: 'office' },
+                     { x: 2, y: 5, char: 'B', isInteractable: true, display: '🏦', type: 'bank' },
+                     { x: 9, y: 5, char: 'H', isInteractable: true, display: '🏠', type: 'home' },
+                     { x: 5, y: 7, char: 'S', isInteractable: true, display: '🌟', type: 'invest' },
+                     { x: 4, y: 7, char: 'z', display: '🎵' }, { x: 6, y: 7, char: 'z', display: '💻' }, { x: 5, y: 6, char: 'z', display: '🎨' }, { x: 5, y: 8, char: 'z', display: '💼' }
+                ],
+                customLegend: { '$': '💵' }
+            },
+            {
+                title: "Dream 17: The Brain",
+                objective: "Unlock the Creative Mind. Follow the sequence.",
+                lyric: "manifesting new realities from my limitless imagination,",
+                type: 'lucid_find', target: 'S', hint: "Center yourself in Logic to find Memory. Then go Left to find Creation.", backgroundColor: '#4a2c4a',
+                customLegend: { 'x': '🧠', '1':'🌀', '2':'🌀', '3':'🌀', '4':'🌀', '5':'🌀', '6':'🌀', 'S':'✨' },
+                map: ["   xxxxxx", " xx......xx", "x..........x", "x..P.......x", "x..........x", " x...1..2.x", "  x......x", " x...3..4.x", "x..........x", "x.....S....x", " xx......xx", "   xxxxxx"],
+                worldData: [
+                    { x: 5, y: 5, char: '1', display: '🌀', isTeleporter: true, destX: 4, destY: 3 }, { x: 8, y: 5, char: '2', display: '🌀', isTeleporter: true, destX: 5, destY: 7 },
+                    { x: 5, y: 7, char: '3', display: '🌀', isTeleporter: true, destX: 6, destY: 9 }, { x: 8, y: 7, char: '4', display: '🌀', isTeleporter: true, destX: 4, destY: 3 },
+                    { x: 6, y: 9, char: 'S', isInteractable: true, isHidden: false, trueForm: 'S', display: '✨' }
+                ]
+            },
+            {
+                title: "Dream 18: Ascension",
+                objective: "Walk into the future.",
+                lyric: "this life's so ____",
+                type: 'ascension', target: 'X', backgroundColor: '#87CEFA', 
+                map: ["..........", "..........", "..........", "..........", "..........", "..........", "..........", "..........", "....P.....", ".........."],
+                worldData: [ { x: 4, y: 0, char: 'X', isInteractable: true, display: ' ', trueForm: 'X' } ]
             }
         ];
 
-        // --- Player Sprite ---
+        // --- Core Functions ---
+        
+        // This is the NEW Scoped GetEmoji function
+        function getEmoji(char) {
+            // 1. Check Level-Specific Custom Legend
+            const currentLvlData = levels[game.currentLevel];
+            if (currentLvlData.customLegend && currentLvlData.customLegend[char]) {
+                return currentLvlData.customLegend[char];
+            }
+            
+            // 2. Check Global Legend
+            if (GLOBAL_EMOJIS[char] !== undefined) {
+                return GLOBAL_EMOJIS[char];
+            }
+            
+            // 3. Fallback: Return raw character (useful for Level 12 letters)
+            return char;
+        }
+
         function createPlayerTextures() {
             player.runFrame1 = document.createElement('canvas'); player.runFrame1.width = 64; player.runFrame1.height = 128;
             player.runFrame2 = document.createElement('canvas'); player.runFrame2.width = 64; player.runFrame2.height = 128;
@@ -476,7 +489,14 @@
                  drawMJSprite(player.runFrame1.getContext('2d'), 'run1'); drawMJSprite(player.runFrame2.getContext('2d'), 'run2');
              } else if (player.outfit === 'batman') {
                  drawBatmanSprite(player.runFrame1.getContext('2d'), 'run1'); drawBatmanSprite(player.runFrame2.getContext('2d'), 'run2');
+             } else if (player.outfit === 'car') {
+                 // Bigger canvas for the car
+                 player.runFrame1.width = 80; player.runFrame1.height = 128;
+                 player.runFrame2.width = 80; player.runFrame2.height = 128;
+                 drawCarSprite(player.runFrame1.getContext('2d'), 'run1'); drawCarSprite(player.runFrame2.getContext('2d'), 'run2');
              } else {
+                 player.runFrame1.width = 64; player.runFrame1.height = 128;
+                 player.runFrame2.width = 64; player.runFrame2.height = 128;
                  drawPlayerSprite(player.runFrame1.getContext('2d'), 'run1'); drawPlayerSprite(player.runFrame2.getContext('2d'), 'run2');
              }
         }
@@ -549,6 +569,36 @@
             else { ctx.fillRect(16, 110, 14, 10); ctx.fillRect(34, 114, 14, 10); }
         }
 
+        function drawCarSprite(ctx, mode) {
+            ctx.clearRect(0, 0, 80, 128); // Larger Clear
+            // Big Top-Down Red Sports Car
+            ctx.fillStyle = '#ff0000'; 
+            ctx.beginPath();
+            ctx.moveTo(20, 10);
+            ctx.lineTo(60, 10);
+            ctx.lineTo(70, 30);
+            ctx.lineTo(70, 110);
+            ctx.lineTo(60, 120);
+            ctx.lineTo(20, 120);
+            ctx.lineTo(10, 110);
+            ctx.lineTo(10, 30);
+            ctx.fill();
+
+            // Tires
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0, 25, 10, 20); ctx.fillRect(70, 25, 10, 20);
+            ctx.fillRect(0, 85, 10, 20); ctx.fillRect(70, 85, 10, 20);
+
+            // Windshield
+            ctx.fillStyle = '#87CEEB'; 
+            ctx.fillRect(20, 35, 40, 20);
+            ctx.fillRect(20, 80, 40, 10); // Rear
+
+            // Stripe
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(36, 10, 8, 110);
+        }
+
         function drawPlayer() {
             let frame = player.currentFrame === 1 ? player.runFrame1 : player.runFrame2;
             if (keys.up || keys.down || keys.left || keys.right || keys.joyActive) {
@@ -557,8 +607,31 @@
                     if (keys.up) player.facing = {x: 0, y: -1}; else if (keys.down) player.facing = {x: 0, y: 1}; else if (keys.left) player.facing = {x: -1, y: 0}; else if (keys.right) player.facing = {x: 1, y: 0}; else if (keys.joyActive) { if (Math.abs(keys.joyX) > Math.abs(keys.joyY)) { player.facing = {x: keys.joyX > 0 ? 1 : -1, y: 0}; } else { player.facing = {x: 0, y: keys.joyY > 0 ? 1 : -1}; } }
                 }
             }
-            ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.beginPath(); ctx.arc(player.x + player.width/2, player.y + player.height/2, 30, 0, Math.PI*2); ctx.fill(); ctx.restore();
-            ctx.drawImage(frame, player.x, player.y, player.width, player.height);
+            
+            ctx.save(); 
+            // Handle Spinout Transformation
+            if (player.isSpinning) {
+                ctx.translate(player.x + player.width/2, player.y + player.height/2);
+                ctx.rotate(player.spinAngle);
+                ctx.translate(-(player.x + player.width/2), -(player.y + player.height/2));
+            }
+            
+            // Invulnerable flashing
+            if (player.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
+                ctx.globalAlpha = 0.5;
+            }
+
+            ctx.globalCompositeOperation = 'source-over'; 
+            
+            if (player.outfit !== 'car') {
+                ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; ctx.beginPath(); ctx.arc(player.x + player.width/2, player.y + player.height/2, 30, 0, Math.PI*2); ctx.fill(); ctx.restore();
+            }
+
+            // Draw player with scaling
+            ctx.translate(player.x + player.width/2, player.y + player.height/2);
+            ctx.scale(player.scale, player.scale);
+            ctx.drawImage(frame, -player.width/2, -player.height/2, player.width, player.height);
+            ctx.restore();
             
             let target = game.interactionTarget;
             if (!target && levels[game.currentLevel].type === 'tile_light_up') {
@@ -581,17 +654,26 @@
         function loadLevel(levelIndex) {
             if (levelIndex >= levels.length) { winGame(); return; }
             game.isGameRunning = false; game.isPaused = false;
+            game.isLevelTransitioning = false;
             if (levelIndex !== game.currentLevel) game.persistentWinnerIdx = -1; 
             game.currentLevel = levelIndex;
             if (levelIndex > game.maxLevelReached) game.maxLevelReached = levelIndex;
             
             const level = levels[levelIndex];
             player.outfit = level.outfit || 'normal';
+            player.scale = 1; // Reset scale
             updatePlayerTexture();
             
             game.levelMap = []; game.worldData = []; game.dangers = []; game.particles = []; game.floatingTexts = []; game.shake = 0;
             game.target = level.target; game.collected = 0; game.targetCount = 0; game.heartTimer = 0; game.mirrorHintTimer = 0; game.supplyDropTimer = 0; game.levelHintTimer = null; game.inventory = [];
+            game.moneyCollected = 0;
+            game.officeClicks = 0;
+            game.investedStar = 0;
+            game.investedHouse = 0;
+            game.levelCleared = false;
             
+            player.isSpinning = false; player.invulnerable = false; player.spinTimer = 0;
+
             // Timer Setup
             if (level.timeLimit) {
                 game.timeLeft = level.timeLimit;
@@ -600,12 +682,39 @@
                 game.timeLeft = 0;
                 timerDisplay.style.display = "none";
             }
+
+            // Lives Setup for Car Level
+            if (level.type === 'car_runner') {
+                game.lives = 3;
+                updateLivesUI();
+                livesDisplay.style.display = 'block';
+            } else {
+                livesDisplay.style.display = 'none';
+            }
+            
+            // Money Setup for Level 16
+            if (level.type === 'investment_run') {
+                moneyDisplay.style.display = 'block';
+                updateMoneyUI();
+            } else {
+                moneyDisplay.style.display = 'none';
+            }
             
             updateInventoryUI();
-            player.width = game.fixedTileSize * 0.8; player.height = game.fixedTileSize * 1.6;
+            
+            if (player.outfit === 'car') {
+                player.width = 60; // Wider car
+                player.height = 100; // Taller car
+            } else {
+                player.width = game.fixedTileSize * 0.8; player.height = game.fixedTileSize * 1.6;
+            }
+            
+            if (level.type === 'ascension') {
+                player.scale = 2; // Start big
+            }
 
             const map = level.map;
-            const hideChars = ['L', 'B', 'H', 'S', 'm', 'c', 'k', 'N', 'A', 'n', 'f', 'y', 'X', 'g', 'o', 'e', 'd', '$', 'K', 'Q', 'P'];
+            const hideChars = ['L', 'B', 'H', 'S', 'm', 'c', 'k', 'N', 'A', 'n', 'f', 'y', 'X', 'g', 'o', 'e', 'd', '$', 'K', 'Q', 'P', 'E', 'F', 'T', 'O', 'Z', 'C', 'D'];
 
             for (let r = 0; r < map.length; r++) {
                 game.levelMap[r] = [];
@@ -614,10 +723,11 @@
                     const obj = { c: c, r: r, x: c * game.fixedTileSize, y: r * game.fixedTileSize, emoji: getEmoji(char), char: char };
                     game.levelMap[r][c] = obj;
                     
-                    if (char === 'P') {
+                    if (char === 'P' || char === '@') {
                         player.x = obj.x; player.y = obj.y - (player.height - game.fixedTileSize); 
                         game.camera.x = player.x + (player.width / 2); game.camera.y = player.y + (player.height / 2);
-                        game.levelMap[r][c].emoji = ''; game.levelMap[r][c].char = '.';
+                        // Only replace 'P', keep '@' for Eye Test so letter isn't removed visually if needed, though we usually hide it
+                        if(char === 'P') { game.levelMap[r][c].emoji = ''; game.levelMap[r][c].char = '.'; }
                     } else if (char === 'X' && level.title.includes("Billie Jean")) {
                          player.x = obj.x; player.y = obj.y - (player.height - game.fixedTileSize);
                          game.camera.x = player.x; game.camera.y = player.y;
@@ -627,7 +737,7 @@
             
             if (level.worldData) {
                 game.worldData = level.worldData.map(obj => ({
-                    ...obj, x: obj.x * game.fixedTileSize, y: obj.y * game.fixedTileSize, emoji: obj.display || getEmoji(obj.char), isCollected: false, currentPathIndex: 0
+                    ...obj, x: obj.x * game.fixedTileSize, y: obj.y * game.fixedTileSize, emoji: getEmoji(obj.char), isCollected: false, currentPathIndex: 0
                 }));
                 game.worldData.forEach(obj => { if (obj.char === level.danger) game.dangers.push(obj); });
                 game.worldData.forEach(obj => {
@@ -680,14 +790,29 @@
         }
 
         function getEmoji(char) {
+            // FIX: Prioritize the main game emojis before handling special logic to avoid overwrites.
+            // If it is the Eye Test level, ONLY then treat letters as letters.
+            if (game.currentLevel === 11) { // Index 11 is "Dream 12: The Eye Test" (0-based: 0..11)
+                // Added C to exclusion list so C becomes C
+                if (['E','F','P','T','O','Z','L','D','A','B','C','J','K','M','N','Q','R','U','V','W','X'].includes(char)) return char; 
+            }
+
             const map = {
-                '#': '🧱', 'L': '💡', 'B': '🛏️', 'C': '🥐', 'M': '☁️', 'W': '💨', 'H': '❤️', 'R': '🪨', 'D': '👿', 'm': '🪞', 'E': '👁️', 'J': '🎃', 'G': '👻', 'c': '🐈‍⬛', 'b': '🦇', 'k': '🚗', 'F': '🐠', 'Z': '🦀', 'T': '🐢', 'O': '🐙', 'N': '🌰', 'S': '🌊', 'A': '🥃', 'U': '🏖️', 'Y': '✔️', 'N': '❌', 'd': '💎', '$': '💰', 'p': '📈', 'i': '🏢', 'b': '🏦', 'w': '💼', 'v': '✨', '8': '∞', 'z': '🧘', 'X': '🚁', 'g': '👓', 'o': '👵', 's': '🛥️', 'e': '🎖️', 'y': '🍬', 'V': '🦇', 'T': '🪦', 'K': '🚓', 'Q': '🐿️', 'O': '🟦', 'A': '😠', 'P': '', 'H': '🏠', 'J': '🎃'
+                '#': '🧱', 'L': '💡', 'B': '🛏️', 'C': '🥐', 'M': '☁️', 'W': '💨', 'H': '❤️', 'R': '🪨', 'D': '💤', 'm': '🪞', 'E': '👁️', 'J': '🎃', 'G': '👻', 'c': '🐈‍⬛', 'b': '🦇', 'k': '🚗', 'F': '🐠', 'Z': '🦀', 'T': '🐢', 'O': '🐙', 'N': '🌰', 'S': '🌊', 'A': '🥃', 'U': '🏖️', 'Y': '✔️', 'N': '❌',
+                'd': '💎', '$': '💰', 'p': '📈', 'i': '🏢', 'h': '🏦', 'w': '💼',
+                'v': '✨', '8': '∞', 'z': '🧘', 'X': '🚁', 'g': '👓', 'o': '👵',
+                's': '🛥️', 'e': '🎖️', 'y': '🍬', 'V': '🦇', 'K': '🚓', 'Q': '🐿️',
+                '|': '', ':': '', 'f': '👨‍👩‍👧‍👦', 'n': '👧', 'z': '💤', 'D': '👿'
             };
             return map[char] || '';
         }
 
         function startGame() {
             game.isGameRunning = true; game.isPaused = false; game.lastTime = performance.now(); 
+            // Title Screen Logic
+            document.getElementById('titleScreen').classList.add('hidden');
+            if (titleAnimId) cancelAnimationFrame(titleAnimId);
+
             levelIntro.classList.add('hidden'); pauseButton.classList.remove('hidden'); menuButton.classList.remove('hidden'); lyricClueBox.classList.remove('hidden'); inventoryBox.classList.remove('hidden');
             requestAnimationFrame(gameLoop);
         }
@@ -704,8 +829,12 @@
             levelGrid.innerHTML = '';
             levels.forEach((lvl, idx) => {
                 const btn = document.createElement('div'); btn.classList.add('level-btn'); btn.textContent = idx + 1;
-                if (idx > game.maxLevelReached) { btn.classList.add('locked'); btn.textContent = "🔒"; } 
-                else { if (idx === game.currentLevel) btn.classList.add('active'); btn.onclick = () => { closeLevelSelect(); loadLevel(idx); startGame(); }; }
+                if (idx > game.maxLevelReached && !game.lucidModeUnlocked) { btn.classList.add('locked'); btn.textContent = "🔒"; } 
+                else { 
+                    if (game.lucidModeUnlocked) btn.classList.add('unlocked-cheat');
+                    if (idx === game.currentLevel) btn.classList.add('active'); 
+                    btn.onclick = () => { closeLevelSelect(); loadLevel(idx); startGame(); }; 
+                }
                 levelGrid.appendChild(btn);
             });
         }
@@ -722,8 +851,18 @@
             if (game.inventory.length === 0) { inventoryBox.style.display = 'none'; } 
             else { inventoryBox.style.display = 'flex'; game.inventory.forEach(item => { const el = document.createElement('div'); el.textContent = getEmoji(item) || item; el.style.fontSize = '1.2rem'; inventoryBox.appendChild(el); }); }
         }
+        
+        function updateLivesUI() {
+            livesDisplay.textContent = "💪🏾 ".repeat(game.lives);
+        }
+        
+        function updateMoneyUI() {
+            moneyDisplay.textContent = `💰 ${game.moneyCollected}`;
+        }
 
         function nextLevel() {
+            if(game.isLevelTransitioning) return;
+            game.isLevelTransitioning = true;
             game.persistentWinnerIdx = -1; if (game.levelHintTimer) clearTimeout(game.levelHintTimer);
             spawnParticles(player.x, player.y, 50, "#fff"); setTimeout(() => { loadLevel(game.currentLevel + 1); }, 800);
         }
@@ -741,6 +880,28 @@
             game.isGameRunning = false; endScreen.classList.remove('hidden'); pauseButton.classList.add('hidden'); menuButton.classList.add('hidden'); lyricClueBox.classList.add('hidden');
         }
         
+        function startSpinout() {
+            if (player.invulnerable) return;
+            player.isSpinning = true;
+            player.spinTimer = 1000;
+            player.invulnerable = true;
+            game.lives--;
+            updateLivesUI();
+            shakeScreen(20);
+            spawnText(player.x + player.width/2, player.y, "CRASH!", "#ff0000");
+            
+            if (game.lives <= 0) {
+                setTimeout(() => gameOver("Too many crashes!"), 1000);
+            }
+        }
+        
+        function activateLucidMode() {
+            if (game.lucidModeUnlocked) return;
+            game.lucidModeUnlocked = true;
+            showHint("Third Eye Opened 👁️ - Lucid Mode Active");
+            spawnParticles(canvas.width/2, canvas.height/2, 100, "#00ffff");
+        }
+        
         function doLucidTouch() {
             if (keys.touch) keys.touch = false;
             
@@ -755,7 +916,8 @@
                      return;
                  }
             }
-
+            
+            // Interaction logic for standard levels
             if (game.interactionTarget) {
                 const obj = game.interactionTarget;
                 const ox = obj.x + game.fixedTileSize / 2; const oy = obj.y + game.fixedTileSize / 2;
@@ -768,7 +930,81 @@
                         else { showHint("Sweet dreams..."); spawnText(ox, oy - 20, "Zzz...", "#aaa"); nextLevel(); }
                         return;
                     }
-                    if (obj.char === 'L') { obj.char = obj.trueForm; obj.emoji = obj.trueForm; obj.isLightOn = false; spawnText(ox, oy - 20, "Click!", "#ffff00"); showHint("You turned off the light."); return; }
+                    if (obj.char === 'L') { obj.char = obj.trueForm; obj.emoji = getEmoji(obj.char); obj.isLightOn = false; spawnText(ox, oy - 20, "Click!", "#ffff00"); showHint("You turned off the light."); return; }
+                }
+                
+                if (level.type === 'car_runner' && obj.char === 'X') {
+                    spawnText(ox, oy-20, "FINISH!", "#00ff00");
+                    nextLevel();
+                    return;
+                }
+                
+                if (level.type === 'ascension' && obj.char === 'X') {
+                    spawnText(ox, oy-20, "WAKING UP...", "#ffffff");
+                    winGame();
+                    return;
+                }
+                
+                if (level.type === 'investment_run') {
+                    if (obj.type === 'office') {
+                        game.officeClicks++;
+                        spawnText(ox, oy-20, "WORK", "#ffff00");
+                        if (game.officeClicks % 3 === 0) {
+                            // Spawn money at bank location (Bank is at index 1 in worldData based on current map)
+                            const bank = game.worldData.find(d => d.type === 'bank');
+                            if (bank) {
+                                // Add new money entity slightly randomized near bank
+                                game.worldData.push({
+                                    x: bank.x + (Math.random()*20 - 10),
+                                    y: bank.y + (Math.random()*20 - 10) + 40, // Below bank
+                                    char: '$',
+                                    isInteractable: true,
+                                    type: 'money',
+                                    display: '💰'
+                                });
+                                showHint("Paycheck deposited at Bank!");
+                            }
+                        }
+                    }
+                    if (obj.type === 'money') {
+                        game.moneyCollected++;
+                        updateMoneyUI();
+                        showHint(`Got Cash! (${game.moneyCollected})`);
+                        spawnText(ox, oy-20, "$$$", "#00ff00");
+                        // Remove this specific money bag
+                        const idx = game.worldData.indexOf(obj);
+                        if (idx > -1) game.worldData.splice(idx, 1);
+                        game.interactionTarget = null; // Clear target so we don't re-click
+                    }
+                    if (obj.type === 'home') {
+                        if (game.moneyCollected > 0) {
+                            game.investedHouse += game.moneyCollected;
+                            game.moneyCollected = 0;
+                            updateMoneyUI();
+                            showHint(`Saved at home. (Total: ${game.investedHouse})`);
+                            spawnText(ox, oy-20, "SAVED", "#00ffff");
+                        } else {
+                            showHint("Need money from bank first!");
+                        }
+                    }
+                    if (obj.type === 'invest') {
+                        if (game.moneyCollected > 0) {
+                            game.investedStar += game.moneyCollected;
+                            game.moneyCollected = 0;
+                            updateMoneyUI();
+                            spawnText(ox, oy-20, "INVESTED", "#ff00ff");
+                            
+                            if (game.investedStar > game.investedHouse && game.investedStar >= 3) {
+                                showHint("Self-Investment Pays Off!");
+                                setTimeout(nextLevel, 1500);
+                            } else {
+                                showHint(`Invested: ${game.investedStar}. Need more than House (${game.investedHouse})!`);
+                            }
+                        } else {
+                            showHint("Need cash to invest!");
+                        }
+                    }
+                    return;
                 }
                 
                 if (level.type === 'lucid_choice') { if (obj.trueForm === 'D') gameOver("Wrong choice..."); else { showHint("Wisely chosen."); nextLevel(); } return; }
@@ -797,10 +1033,24 @@
                         return;
                     } else if (level.type === 'lucid_find' || level.type === 'stealth_collect') {
                         obj.char = obj.trueForm; obj.emoji = obj.display || getEmoji(obj.char);
-                        if (['D','G','x','S','P'].includes(obj.trueForm)) { 
+                        if (['D','G','x','P'].includes(obj.trueForm)) { 
                             if (level.title.includes("No Faking")) { showHint("Fake!"); obj.emoji = '🚫'; return; }
                             gameOver("It was a trap!"); return; 
                         }
+                        if (obj.trueForm === 'S') { // Success
+                             showHint("You found it!");
+                             setTimeout(nextLevel, 1000);
+                             return;
+                        }
+                        // Eye Test Interaction Victory
+                        if (level.title.includes("Eye Test") && obj.trueForm === 'g') {
+                             game.levelCleared = true;
+                             obj.isCollected = true; 
+                             showHint("Vision Cleared!");
+                             setTimeout(nextLevel, 2000);
+                             return;
+                        }
+
                         if (level.title.includes("Dying for Love")) {
                             game.collected++; obj.isCollected = true; obj.isInteractable = false; obj.emoji = ''; 
                             spawnText(ox, oy - 20, "Got Heart!", "#ff0000"); showHint(`Collected ${game.collected}/3 Hearts`);
@@ -849,6 +1099,18 @@
         function update(deltaTime) {
             const level = levels[game.currentLevel];
             
+            // Spinout Logic
+            if (player.isSpinning) {
+                player.spinAngle += 0.4;
+                player.spinTimer -= deltaTime;
+                if (player.spinTimer <= 0) {
+                    player.isSpinning = false;
+                    player.spinAngle = 0;
+                    setTimeout(() => { player.invulnerable = false; }, 2000); // 2s Invuln after spin
+                }
+                return; // Disable movement while spinning
+            }
+            
             // Timer Logic
             if (level.timeLimit && !game.isPaused) {
                 game.timeLeft -= deltaTime / 1000;
@@ -857,6 +1119,12 @@
             }
 
             let currentSpeed = player.baseSpeed;
+            
+            // Lazy Legs Effect
+            if (level.type === 'lazy_legs') {
+                currentSpeed *= 0.5;
+            }
+
             if (player.isDashing) {
                 currentSpeed = player.dashSpeed; player.dashDuration -= deltaTime;
                 spawnParticles(player.x + player.width/2, player.y + player.height, 1, "#00ffff"); 
@@ -879,6 +1147,16 @@
             const nextX = player.x + dx; const nextY = player.y + dy;
             if (!isWallCollision(nextX, player.y)) player.x = nextX;
             if (!isWallCollision(player.x, nextY)) player.y = nextY;
+            
+            // Ascension Logic (Level 19)
+            if (level.type === 'ascension') {
+                // Shrink player as they go up
+                const startY = (level.map.length - 2) * game.fixedTileSize;
+                const progress = Math.max(0, (startY - player.y) / (startY)); // 0 to 1
+                player.scale = Math.max(0.1, 2 - (progress * 1.9));
+                
+                // Removed automatic win condition
+            }
 
             updateWorldData(deltaTime);
             updateParticles(deltaTime);
@@ -969,10 +1247,12 @@
                     const targetPos = obj.path[obj.currentPathIndex];
                     const tx = targetPos.x * game.fixedTileSize; const ty = targetPos.y * game.fixedTileSize;
                     const dist = Math.hypot(tx - obj.x, ty - obj.y);
-                    if (dist < moveSpeed) {
+                    const actualSpeed = moveSpeed * (obj.speedMult || 1);
+                    
+                    if (dist < actualSpeed) {
                         obj.x = tx; obj.y = ty; obj.currentPathIndex = (obj.currentPathIndex + 1) % obj.path.length;
                     } else if (dist > 0) {
-                        obj.x += ((tx - obj.x) / dist) * moveSpeed; obj.y += ((ty - obj.y) / dist) * moveSpeed;
+                        obj.x += ((tx - obj.x) / dist) * actualSpeed; obj.y += ((ty - obj.y) / dist) * actualSpeed;
                     }
                     const danger = game.dangers.find(d => d.worldData === obj);
                     if (danger) { danger.x = obj.x; danger.y = obj.y; }
@@ -994,7 +1274,16 @@
             for (const c of corners) {
                 const tile = getTileAt(c.x, c.y);
                 if (!tile) return true; 
-                if (['#', 'm', 'M', 'v', 'J', 'S', 'O'].includes(tile.char)) return true;
+                // Updated wall chars including Eye Chart letters
+                if (['#', 'm', 'M', 'v', 'J', 'S', 'O', 'v', 'v', '|', 'x'].includes(tile.char)) return true;
+                
+                // Special Eye Test Level Wall Logic
+                if (levels[game.currentLevel].title.includes("Eye Test") && 
+                    ['E','F','P','T','O','Z','L','D','C','A','B','J','K','M','N','Q','R','U','V','W','X'].includes(tile.char)) {
+                    return true;
+                }
+
+                if (['vvvvvvvvvv'].includes(tile.char)) return true;
             }
             return false;
         }
@@ -1003,18 +1292,74 @@
             const pRect = { x: player.x, y: player.y, width: player.width, height: player.height };
             const level = levels[game.currentLevel];
 
-            // Dangers
-            for (const d of game.dangers) {
-                const dRect = { x: d.x+10, y: d.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
-                if (isRectCollision(pRect, dRect)) { gameOver("Caught!"); return; }
-            }
-            // Dynamic Dangers (Chasers)
+            // Teleporters (Level 18)
             game.worldData.forEach(obj => {
-                if (obj.isChaser && obj.char === level.danger) {
-                    const dRect = { x: obj.x+10, y: obj.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
-                    if (isRectCollision(pRect, dRect)) { gameOver("Caught by Ghost!"); return; }
+                if (obj.isTeleporter) {
+                    const tRect = { x: obj.x, y: obj.y, width: game.fixedTileSize, height: game.fixedTileSize };
+                    if (isRectCollision(pRect, tRect)) {
+                        player.x = obj.destX * game.fixedTileSize;
+                        // FIX: Calculate Y to align player feet with tile bottom, avoiding wall clipping
+                        player.y = (obj.destY * game.fixedTileSize) - (player.height - game.fixedTileSize);
+                        
+                        spawnParticles(player.x, player.y, 30, "#00ffff");
+                        spawnText(player.x, player.y-20, "WARP!", "#00ffff");
+                    }
                 }
             });
+
+            // Check WorldData Targets (for cases where map tiles are hidden/replaced)
+            for (const obj of game.worldData) {
+                if ((obj.char === game.target || obj.trueForm === game.target) && !obj.isCollected) {
+                     const tRect = { x: obj.x, y: obj.y, width: game.fixedTileSize, height: game.fixedTileSize };
+                     if (isRectCollision(pRect, tRect)) {
+                         // trigger interaction
+                         game.interactionTarget = obj;
+                         
+                         // Note: Removed automatic doLucidTouch here for specific levels
+                         // to ensure manual interaction is required as per user request
+                         
+                         return;
+                     }
+                }
+                
+                // Also handle special named targets like Finish Line (X)
+                if ((level.type === 'car_runner' && obj.char === 'X') || (level.type === 'ascension' && obj.char === 'X')) {
+                    const tRect = { x: obj.x, y: obj.y, width: game.fixedTileSize, height: game.fixedTileSize };
+                    if (isRectCollision(pRect, tRect)) {
+                         game.interactionTarget = obj;
+                         return;
+                    }
+                }
+            }
+
+            // Dangers
+            if (!player.invulnerable) {
+                for (const d of game.dangers) {
+                    const dRect = { x: d.x+10, y: d.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
+                    if (isRectCollision(pRect, dRect)) { 
+                        if (level.type === 'car_runner' && d.char === 'M') {
+                            startSpinout(); return;
+                        }
+                        gameOver("Caught!"); return; 
+                    }
+                }
+                // Dynamic Dangers (Chasers)
+                game.worldData.forEach(obj => {
+                    if (obj.isChaser && obj.char === level.danger) {
+                        const dRect = { x: obj.x+10, y: obj.y+10, width: game.fixedTileSize-20, height: game.fixedTileSize-20 };
+                        if (isRectCollision(pRect, dRect)) { gameOver("Caught by Ghost!"); return; }
+                    }
+                    if (level.type === 'car_runner' && obj.char === 'M') {
+                        const dRect = { x: obj.x, y: obj.y, width: 30, height: 30 }; // Smaller emoji hitbox
+                        if (isRectCollision(pRect, dRect)) { startSpinout(); return; }
+                    }
+                    // Lazy Legs Obstacles
+                    if (level.type === 'lazy_legs' && obj.char === 'C') {
+                         const dRect = { x: obj.x+5, y: obj.y+5, width: 30, height: 30 };
+                         if (isRectCollision(pRect, dRect)) { gameOver("Pinched by Crab!"); return; }
+                    }
+                });
+            }
 
             if (level.type === 'drop_catch') {
                 for (const obj of game.worldData) {
@@ -1031,10 +1376,27 @@
                     if (obj.char === game.target) {
                         const tRect = { x: obj.x, y: obj.y, width: game.fixedTileSize, height: game.fixedTileSize };
                         if (isRectCollision(pRect, tRect)) {
+                            // Only auto-collect for 'collect' types, others require manual interaction
                             if (level.type === 'collect' || level.type === 'stealth_collect') {
                                 game.collected++; obj.char = '.'; obj.emoji = ''; spawnParticles(obj.x+20, obj.y+20, 10, "#ffff00"); spawnText(obj.x, obj.y, "+1", "#ffff00"); showHint(`Collected ${game.collected}/${game.targetCount}`);
                                 if (game.collected >= game.targetCount) nextLevel();
-                            } else if (level.type === 'find' || level.type === 'find_reversed') { nextLevel(); }
+                            } else if (level.type === 'find' || level.type === 'find_reversed') { 
+                                // Auto triggers for simple find levels
+                                nextLevel(); 
+                            }
+                            else if (level.type === 'car_runner') { 
+                                // Manual interaction required, do nothing on collision except set target
+                                game.interactionTarget = obj; 
+                            }
+                            else if (level.type === 'lucid_find') {
+                                // For lucid find, typically we require interaction unless specified otherwise
+                                // The checkCollisions loop handles map tiles, but our targets might be in worldData or map tiles.
+                                // If it's a map tile target for lucid_find, we usually require doLucidTouch.
+                                // But if it's explicitly colliding, and not handled by worldData loop, we can set target here.
+                                // However, most lucid_find targets are hidden/worldData.
+                                // If it's visible on map, we treat it as interactable.
+                                game.interactionTarget = obj;
+                            }
                             return;
                         }
                     }
@@ -1058,26 +1420,86 @@
                 const b = Math.floor(130 + (0 - 130) * p);
                 ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
             } else {
-                ctx.fillStyle = level.backgroundColor;
+                if (level.type === 'ascension') {
+                    // Sky gradient
+                    let grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                    grad.addColorStop(0, "#8A2BE2"); // Purple top
+                    grad.addColorStop(1, "#FAFAD2"); // Light Yellow bottom
+                    ctx.fillStyle = grad;
+                } else {
+                    ctx.fillStyle = level.backgroundColor;
+                }
             }
             
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Ascension Text
+            if (level.type === 'ascension') {
+                const startY = (level.map.length - 2) * game.fixedTileSize;
+                const progress = Math.max(0, (startY - player.y) / (startY));
+                ctx.save();
+                ctx.globalAlpha = Math.min(1, progress * 1.5);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 80px Inter";
+                ctx.textAlign = "center";
+                ctx.shadowColor = "rgba(0,0,0,0.5)";
+                ctx.shadowBlur = 10;
+                ctx.fillText("AMAZING", canvas.width/2, 200);
+                ctx.restore();
+            }
 
             let sx = (Math.random() - 0.5) * game.shake * 10; let sy = (Math.random() - 0.5) * game.shake * 10;
             ctx.save(); ctx.translate(canvas.width/2 + sx, canvas.height/2 + sy); ctx.translate(-game.camera.x, -game.camera.y);
 
             ctx.fillStyle = "#ffffff"; ctx.font = `${game.fixedTileSize * 0.8}px 'Inter', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-
+            
+            // Draw Map
             for (let r = 0; r < game.levelMap.length; r++) {
                 for (let c = 0; c < game.levelMap[r].length; c++) {
                     const obj = game.levelMap[r][c];
+                    
+                    // Specific Logic for Road Lines
+                    if (level.type === 'car_runner' && obj.char === ':') {
+                         ctx.fillStyle = "#666";
+                         ctx.fillRect(obj.x + 18, obj.y + 5, 4, 30); // Road dash
+                         continue;
+                    }
+                    if (level.type === 'car_runner' && obj.char === '|') {
+                         ctx.fillStyle = "#006400"; // Grass
+                         ctx.fillRect(obj.x, obj.y, game.fixedTileSize, game.fixedTileSize);
+                         continue;
+                    }
+                    
+                    // Draw Eye Chart Letters as Walls
+                    if (level.title.includes("Eye Test") && ['E','F','P','T','O','Z','L','D','C','A','B','J','K','M','N','Q','R','U','V','W','X'].includes(obj.char)) {
+                        // Eye test logic: Low opacity until cleared
+                        const alpha = game.levelCleared ? 1.0 : 0.3;
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.fillStyle = "#ffffff"; 
+                        ctx.fillText(obj.char, obj.x + 20, obj.y + 20);
+                        ctx.restore();
+                        continue;
+                    }
+
                     if (level.type === 'tile_light_up' && obj.char === 'F') {
                         ctx.save();
                         if (obj.active) { ctx.shadowBlur = 20; ctx.shadowColor = "#fff"; ctx.fillStyle = "rgba(255, 255, 200, 0.8)"; } else { ctx.fillStyle = "rgba(50, 50, 50, 0.5)"; }
                         ctx.fillRect(obj.x+2, obj.y+2, game.fixedTileSize-4, game.fixedTileSize-4); ctx.restore();
                     } 
                     else if (level.type === 'drop_catch' && obj.char === 'G') { ctx.fillStyle = "#228B22"; ctx.fillRect(obj.x, obj.y, game.fixedTileSize, game.fixedTileSize); }
-                    else if (obj.emoji) { ctx.fillText(obj.emoji, obj.x+20, obj.y+20); }
+                    else if (obj.emoji) { 
+                        // Eye test override for opacity
+                        if (level.title.includes("Eye Test")) {
+                            const alpha = game.levelCleared ? 1.0 : 0.3;
+                            ctx.save();
+                            ctx.globalAlpha = alpha;
+                            ctx.fillText(obj.emoji, obj.x+20, obj.y+20); 
+                            ctx.restore();
+                        } else {
+                            ctx.fillText(obj.emoji, obj.x+20, obj.y+20); 
+                        }
+                    }
                 }
             }
             
@@ -1087,17 +1509,38 @@
             } else {
                 for (const obj of game.worldData) {
                     if (obj.emoji && !obj.isCollected) {
+                         // Eye test override for opacity (Granny excluded via check below, but worldData items need check)
+                         // Wait, Granny is in worldData.
+                         let alpha = 1.0;
+                         if (level.title.includes("Eye Test") && !game.levelCleared) {
+                             // Granny (X) should be full opacity. Glasses (g) low.
+                             if (obj.char !== 'X') alpha = 0.3; 
+                         }
+                        
                         if (obj.isInteractable) { ctx.shadowBlur = 15; ctx.shadowColor = "rgba(255, 255, 255, 0.5)"; }
-                        ctx.fillText(obj.emoji, obj.x+20, obj.y+20); ctx.shadowBlur = 0;
+                        
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+                        ctx.fillText(obj.emoji, obj.x+20, obj.y+20); 
+                        ctx.restore();
+                        ctx.shadowBlur = 0;
                     }
                 }
+            }
+            
+            // Celebration stars for Eye Test
+            if (level.title.includes("Eye Test") && game.levelCleared) {
+                if (Math.random() < 0.1) spawnParticles(Math.random()*canvas.width, Math.random()*canvas.height, 1, "#ffff00");
             }
 
             game.particles.forEach(p => p.draw(ctx));
             drawPlayer();
             game.floatingTexts.forEach(t => t.draw(ctx));
 
-            if (level.effect === 'hazy') { ctx.fillStyle = 'rgba(180, 180, 180, 0.3)'; ctx.fillRect(game.camera.x-canvas.width, game.camera.y-canvas.height, canvas.width*2, canvas.height*2); }
+            if (level.effect === 'hazy' && !game.levelCleared) { 
+                ctx.fillStyle = 'rgba(180, 180, 180, 0.3)'; 
+                ctx.fillRect(game.camera.x-canvas.width, game.camera.y-canvas.height, canvas.width*2, canvas.height*2); 
+            }
             
             ctx.restore(); 
             
@@ -1116,6 +1559,15 @@
             createPlayerTextures(); loadLevel(0);
             function resize() { const c = document.getElementById('gameContainer'); canvas.width = c.clientWidth; canvas.height = c.clientHeight; draw(); }
             window.addEventListener('resize', resize); resize();
+            
+            // Title screen enter button
+            enterDreamButton.addEventListener('click', () => {
+                document.getElementById('titleScreen').classList.add('hidden');
+                cancelAnimationFrame(titleAnimId);
+                loadLevel(0); // Load level 1 explicitly when entering
+                startGame();
+            });
+
             levelStartButton.onclick = startGame; pauseButton.addEventListener('click', togglePause); menuButton.addEventListener('click', () => { togglePause(); openLevelSelect(); }); resumeButton.addEventListener('click', togglePause);
             
             const stick = document.getElementById('analogStick'); const knob = document.getElementById('stickKnob'); let drag = false; const maxDist = 35;
@@ -1140,6 +1592,13 @@
             bindBtn('lucidTouchButton', 'touch'); bindBtn('dashButton', 'dash');
 
             window.addEventListener('keydown', (e) => {
+                // Cheat Code Listener
+                if (e.key.length === 1 && !game.lucidModeUnlocked) {
+                    cheatCodeBuffer += e.key.toLowerCase();
+                    if (cheatCodeBuffer.length > 8) cheatCodeBuffer = cheatCodeBuffer.slice(-8);
+                    if (cheatCodeBuffer === "meditate") activateLucidMode();
+                }
+
                 if (e.key === 'Escape') { togglePause(); return; }
                 switch(e.key) { case 'ArrowUp': case 'w': case 'W': keys.up = true; break; case 'ArrowDown': case 's': case 'S': keys.down = true; break; case 'ArrowLeft': case 'a': case 'A': keys.left = true; break; case 'ArrowRight': case 'd': case 'D': keys.right = true; break; case 'e': case 'E': keys.touch = true; break; case ' ': keys.dash = true; break; }
             });
@@ -1147,6 +1606,34 @@
                 switch(e.key) { case 'ArrowUp': case 'w': case 'W': keys.up = false; break; case 'ArrowDown': case 's': case 'S': keys.down = false; break; case 'ArrowLeft': case 'a': case 'A': keys.left = false; break; case 'ArrowRight': case 'd': case 'D': keys.right = false; break; case 'e': case 'E': keys.touch = false; break; case ' ': keys.dash = false; break; }
             });
             document.body.addEventListener('touchstart', (e) => { if (e.target.closest('#mobileControls')) e.preventDefault(); }, { passive: false });
+            
+            // Title screen animation loop
+            function animateTitle() {
+                if (document.getElementById('titleScreen').classList.contains('hidden')) return;
+                
+                titleCtx.clearRect(0, 0, titleCanvas.width, titleCanvas.height);
+                
+                // Animate player on title screen
+                const time = Date.now();
+                const frame = (Math.floor(time / 200) % 2 === 0) ? player.runFrame1 : player.runFrame2;
+                
+                // Draw scaled up (2x)
+                titleCtx.save();
+                titleCtx.scale(2, 2);
+                titleCtx.drawImage(frame, 0, 0);
+                titleCtx.restore();
+                
+                titleAnimId = requestAnimationFrame(animateTitle);
+            }
+            
+            // Start title animation immediately
+            if(player.runFrame1) {
+                 animateTitle();
+            } else {
+                 // Wait a bit for textures if init runs fast? 
+                 // createPlayerTextures is synchronous so it's fine.
+                 animateTitle();
+            }
         }
         init();
     </script>
