@@ -301,11 +301,11 @@
             },
             {
                 title: "Dream 4: Astral Rising", objective: "Reach the Astral Form (✨) at the top!", hint: "Dodge the demons and head North.", lyric: "fighting for my life astral body rising above,",
-                type: 'lucid_find', target: 'v', danger: 'D', backgroundColor: '#220033', 
+                type: 'lucid_find', target: 'v', danger: 'M', backgroundColor: '#220033', 
                 // Walls are 'Z' (Sleep Zs), Moving enemies are 'D' (Demons)
                 map: ["BBBBBBBB", "B.v....B", "BBBBBBBB", "B......B", "B.Z..Z.B", "B......B", "B.Z..Z.B", "B......B", "B.P....B", "BBBBBBBB"],
-                customLegend: { 'Z': '💤', 'B': '🛏️', 'D': '👿' },
-                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'M', isMoving: true, path: [{x:1,y:4},{x:6,y:4}], display: '👿' }, { x: 5, y: 6, char: 'M', isMoving: true, path: [{x:6,y:6},{x:1,y:6}], display: '👿' }]
+                customLegend: { 'Z': '💤', 'B': '🛏️', 'D': '👿', 'M': '😈' },
+                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'M', isMoving: true, path: [{x:1,y:4},{x:6,y:4}], display: '😈' }, { x: 5, y: 6, char: 'M', isMoving: true, path: [{x:6,y:6},{x:1,y:6}], display: '😈' }]
             },
              // ... [Other levels with their specific legends or relying on globals] ...
              {
@@ -315,7 +315,7 @@
             },
             {
                 title: "Dream 6: Cat-Women", objective: "Find Halle Berry hidden among the cats.", hint: "Interact with the black cats. One is a dancer!", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
-                type: 'lucid_find', target: 'h', backgroundColor: '#222', 
+                type: 'lucid_find', target: 'h', danger: 'b', backgroundColor: '#222', 
                 map: ["JJJJJJJJJJJ", "J.c..G..c.J", "J.........J", "J.c..P..c.J", "J.........J", "J.b..c..b.J", "J.........J", "J.c..G..c.J", "JJJJJJJJJJJ"],
                 worldData: [{ x: 2, y: 5, char: 'b', isMoving: true, path: [{x:2,y:5},{x:8,y:5}], display: '🦇' }]
             },
@@ -324,7 +324,7 @@
                 type: 'tile_light_up', outfit: 'mj', danger: 'W', backgroundColor: '#000000',
                 map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF"], 
                 worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃' }],
-                customLegend: { 'F': '💃🏽' }
+                customLegend: { 'F': '💃🏽', 'W': '💃🏽' }
             },
             {
                 title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses falling from the NASA chute!", hint: "Stay inside the dome. Catch the glasses before they break.", lyric: "underseas drinking brandy... like i’m Sandy",
