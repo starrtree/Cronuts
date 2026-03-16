@@ -421,32 +421,32 @@
             },
              // ... [Other levels with their specific legends or relying on globals] ...
              {
-                title: "Dream 5: Mirrors", objective: "Interact (✨) with mirrors! Find the Star (⭐).", hint: "Watch closely. The correct mirror sparkles occasionally.", lyric: "seeing things that i never seen,",
+                title: "Dream 5: Mirrors", objective: "Navigate the mirror maze and reveal the hidden star.", hint: "Use lucid touch on mirrors—one true reflection glints brighter than the rest.", lyric: "seeing things that i never seen,",
                 type: 'lucid_find', target: 'S', backgroundColor: '#E6E8FA',
                 map: ["#############", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#.....P.....#", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#############"], worldData: [] 
             },
             {
-                title: "Dream 6: Cat-Women", objective: "Find Halle Berry hidden among the cats.", hint: "Interact with the black cats. One is a dancer!", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
+                title: "Dream 6: Cat-Women", objective: "Track the feline phantoms and reveal Halle Berry.", hint: "Bats patrol the hall. Tag black cats quickly before they reset the room.", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
                 type: 'lucid_find', target: 'h', danger: 'b', backgroundColor: '#222', 
                 map: ["JJJJJJJJJJJ", "J.c..G..c.J", "J.........J", "J.c..P..c.J", "J.........J", "J.b..c..b.J", "J.........J", "J.c..G..c.J", "JJJJJJJJJJJ"],
                 worldData: [{ x: 2, y: 5, char: 'b', isMoving: true, path: [{x:2,y:5},{x:8,y:5}], display: '🦇' }]
             },
             {
-                title: "Dream 7: Billie Jean", objective: "Light up 10 Tiles! Dodge Billie Jean.", hint: "Interact with the glowing tile. Watch out for girls!", lyric: "BMs like Billie Jean",
+                title: "Dream 7: Billie Jean", objective: "Moonwalk the floor and light 10 disco tiles.", hint: "Keep moving after every activation—dancers cross diagonally and punish standing still.", lyric: "BMs like Billie Jean",
                 type: 'tile_light_up', outfit: 'mj', danger: 'W', backgroundColor: '#000000',
                 map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF"], 
                 worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃🏽' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃🏽' }],
                 customLegend: { 'F': '💃🏽' }
             },
             {
-                title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses falling from the NASA chute!", hint: "Stay inside the dome. Catch the glasses before they break.", lyric: "underseas drinking brandy... like i’m Sandy",
+                title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses in the deep-sea dome.", hint: "Hold center, then dash to the lane where the next glass is dropping.", lyric: "underseas drinking brandy... like i’m Sandy",
                 type: 'drop_catch', target: 'A', danger: 'Q', backgroundColor: '#1E90FF', 
                 map: ["OOOOOOOOOOOOO", "O...........O", "O...AAAAA...O", "O.G.G.G.G.G.O", "O.G.G.G.G.G.O", "O.G.G.T.G.G.O", "O.G.G.G.G.G.O", "O.....P.....O", "OOOOOOOOOOOOO"],
                 worldData: [{ x: 6, y: 5, char: 'T', isInteractable: false, display: '🌳' }, { x: 2, y: 6, char: 'Q', isMoving: true, path: [{x:2,y:6},{x:10,y:6},{x:10,y:4},{x:2,y:4}], display: '🐿️' }],
                 customLegend: { 'O': '🔮', 'G': '🌳' }
             },
             {
-                title: "Dream 9: Hard Knock Life", objective: "Help Annie. Find a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "Collect all 3 items then return to the girl.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
+                title: "Dream 9: Hard Knock Life", objective: "Help Annie by finding a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "The maze folds back on itself—grab each memory token, then return to Annie.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
                 type: 'fetch_quest', target: 'n', backgroundColor: '#A52A2A', 
                 map: ["################", "#.n.........H..#", "#.P..........#.#", "#............#.#", "####.#.#######.#", "#.k..#.........#", "#....######....#", "#.f............#", "################"],
                 worldData: [{ x: 2, y: 1, char: 'n', isInteractable: true, isGate: true, display: '👧' }, { x: 12, y: 1, char: 'H', isInteractable: true, isCollectible: true, display: '❤️' }, { x: 2, y: 5, char: 'k', isInteractable: true, isCollectible: true, display: '🚗' }, { x: 2, y: 7, char: 'f', isInteractable: true, isCollectible: true, display: '👨‍👩‍👧‍👦' }],
@@ -454,8 +454,8 @@
             },
             {
                 title: "Dream 10: Badman's Cul-de-sac",
-                objective: "Save candy from 6 houses! Kids arrive in 12s!",
-                hint: "Watch out for the Jackolantern-Joker-Ghost!",
+                objective: "Snag candy from 6 houses before the patrol catches you.",
+                hint: "Loop around blocks and break line-of-sight when the joker starts chasing.",
                 lyric: "takin my sweet time like a badman taking some candy,",
                 type: 'stealth_collect', target: 'y', danger: 'J', outfit: 'batman', backgroundColor: '#FFA500', timeLimit: 12,
                 map: ["................", ".HH..........HH.", "H...y......y...H", "H..y........y..H", "....y......y....", "................", "H......P.......H", "H..y........y..H", ".HH..........HH.", "................"],
@@ -463,9 +463,24 @@
                 customLegend: { 'H': '🏘️' }
             },
             {
-                title: "Dream 11: Crazy Driver",
+                title: "Dream 11: Save Me",
+                objective: "Collect proof you're grown (💼, 🚗, 👓), then reach mama.",
+                hint: "Your mama waits at the top. Bring all three symbols of independence before talking to her.",
+                lyric: "Baby can you please save me? My mama still treat me like a baby...",
+                type: 'fetch_quest', target: 'o', backgroundColor: '#3d2b4f',
+                map: ["################", "#.....o........#", "#.###.#######..#", "#...#.....#....#", "#...#.P...#.##.#", "#.###.###.#....#", "#...#...#.#.##.#", "#...###.#...#..#", "#k....g....w...#", "################"],
+                worldData: [
+                    { x: 6, y: 1, char: 'o', isInteractable: true, isGate: true, display: '👵' },
+                    { x: 1, y: 8, char: 'k', isInteractable: true, isCollectible: true, display: '🚗' },
+                    { x: 6, y: 8, char: 'g', isInteractable: true, isCollectible: true, display: '👓' },
+                    { x: 11, y: 8, char: 'w', isInteractable: true, isCollectible: true, display: '💼' }
+                ],
+                questItems: ['k', 'g', 'w']
+            },
+            {
+                title: "Dream 12: Crazy Driver",
                 objective: "Drive against the Crazy Mamas! Reach the 🏁.",
-                lyric: "takin' my sweet time like a Batman takin' some candy...",
+                lyric: "Even though I would kill for her, that woman still drive me crazy...",
                 type: 'car_runner', target: 'X', outfit: 'car', danger: 'M', hint: "Avoid the oncoming drivers! Hit Mamas = Spin out!", backgroundColor: '#333333',
                 map: ["|...:...:...:...|","|...:..X:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...: P :...|","|...:...:...:...|"],
                 worldData: [
@@ -477,7 +492,7 @@
                 ]
             },
             {
-                title: "Dream 12: Lost Vision",
+                title: "Dream 13: Lost Vision",
                 objective: "Search the letter-field and spell VISION before the hangman is finished.",
                 lyric: "won't change even when she's 80, and her eyesight gets hazy...",
                 type: 'vision_hangman', hint: "Help get her _ _ _ _ _ _ back", startHint: "Help get her _ _ _ _ _ _ back", backgroundColor: '#07131d',
@@ -506,7 +521,7 @@
                 worldData: [],
             },
             {
-                title: "Dream 13: Navy Surf",
+                title: "Dream 14: Navy Surf",
                 objective: "Ride the tide, dodge wipeouts, and surf to the TV on shore.",
                 lyric: "like the ocean waves to the Navy, girl I'm used to getting wavy...",
                 type: 'surf_runner', target: 'X', outfit: 'surfer', danger: 'W', hint: "The tide shifts all across the ocean. Flow around the hazards and hit the TV when you reach the beach.", backgroundColor: '#0b4f74', boostGoal: 0, courseWidth: 27, courseHeight: 40, shoreRows: 5, currentBands: 9,
@@ -529,7 +544,7 @@
                 customLegend: { '|': '', 'A': '⚡', 'W': '' }
             },
             {
-                title: "Dream 14: Sacred",
+                title: "Dream 15: Sacred",
                 objective: "Is it yes or no?",
                 lyric: "yes or no not a maybe, gotta make sure cuz its sacred,",
                 type: 'lucid_choice',
@@ -539,7 +554,7 @@
                 worldData: [ { x: 2, y: 6, char: 'Y', isInteractable: true, trueForm: 'S', display: '✔️' }, { x: 9, y: 6, char: 'N', isInteractable: true, trueForm: 'D', display: '❌' } ]
             },
             {
-                title: "Dream 15: No Faking",
+                title: "Dream 16: No Faking",
                 objective: "Find the real diamond.",
                 lyric: "not a big fan of faking,",
                 type: 'lucid_find', target: 'd', hint: "Most of these diamonds are fake. Keep checking.", backgroundColor: '#FFD700', 
@@ -550,7 +565,7 @@
                 ]
             },
             {
-                title: "Dream 16: Big Plans",
+                title: "Dream 17: Big Plans",
                 objective: "Work -> Bank -> Home -> Invest.",
                 lyric: "gotta lotta big plans i been making, and big bands im creating,",
                 type: 'investment_run', target: 'S', hint: "Click Office 3x -> Click Bank Money -> Invest", backgroundColor: '#228B22', 
@@ -565,7 +580,7 @@
                 customLegend: { '$': '💵' }
             },
             {
-                title: "Dream 17: Manifest",
+                title: "Dream 18: Manifest",
                 objective: "Awaken 4 sparks and paint 70 dream-tiles to manifest a new reality.",
                 lyric: "manifesting new realities from my limitless imagination,",
                 type: 'mind_manifest', target: 'S', hint: "Move through the mindscape to paint reality into existence. Sparks change what you create.", backgroundColor: '#120f2d', realityGoal: 70,
@@ -595,7 +610,7 @@
                 ]
             },
             {
-                title: "Dream 18: Ascension",
+                title: "Dream 19: Ascension",
                 objective: "Walk into the future and touch the star beneath AMAZING.",
                 lyric: "this life's so ____",
                 type: 'ascension', target: 'X', backgroundColor: '#87CEFA', 
@@ -1049,7 +1064,7 @@
 
             // FIX: Prioritize the main game emojis before handling special logic to avoid overwrites.
             // If it is the Eye Test level, ONLY then treat letters as letters.
-            if (game.currentLevel === 11) { // Index 11 is "Dream 12: The Eye Test" (0-based: 0..11)
+            if (game.currentLevel === 12) { // Index 12 is "Dream 13: Lost Vision" after inserting the new Dream 11
                 // Added C to exclusion list so C becomes C
                 if (['E','F','P','T','O','Z','L','D','A','B','C','J','K','M','N','Q','R','U','V','W','X'].includes(char)) return char; 
             }
