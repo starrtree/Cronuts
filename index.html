@@ -234,8 +234,10 @@
             visionMaxMistakes: 6,
             visionWrongLetters: [],
             visionMatrixSeed: 0,
+            sweetRushTimer: 0,
             surfBoostTimer: 0,
             surfCurrentBands: [],
+            astralFreezeTimer: 0,
             tvGlitchActive: false,
             tvGlitchTimer: 0,
             tvGlitchSource: null,
@@ -315,32 +317,107 @@
         // --- Levels ---
         const levels = [
             {
-                title: "Dream 1: Insomnia", objective: "Turn off the light (💡) then find your Bed (🛏️).", hint: "The light needs to go out before you can sleep.", lyric: "i aint really been sleep... since the last time i woke up",
+                title: "Dream 1: Insomnia", objective: "Settle the room, calm your mind, then get in bed.", hint: "Nothing in the room can still be buzzing when you try to sleep.", lyric: "i aint really been sleep... since the last time i woke up",
                 type: 'tutorial', target: 'B', backgroundColor: '#191970',
-                map: ["#########", "#P......#", "#.......#", "#.L.....#", "#.......#", "#....B..#", "#########"],
-                worldData: [{ x: 2, y: 3, char: 'L', isInteractable: true, isHidden: false, trueForm: '🌑', isLightOn: true, display: '💡' }, { x: 5, y: 5, char: 'B', isInteractable: true, isHidden: false, trueForm: '🛏️', isBed: true, display: '🛏️' }],
-                customLegend: { 'L': '💡' } 
+                map: ["############", "#..........#", "#.P........#", "#..........#", "#..........#", "#..........#", "#..........#", "#..........#", "############"],
+                worldData: [
+                    { x: 3, y: 3, char: 'L', type: 'lamp', isInteractable: true, isSleepBlocker: true, isLightOn: true, display: '💡', settledDisplay: '🌙', sleepLabel: 'lamp' },
+                    { x: 8, y: 2, char: 'q', type: 'phone', isInteractable: true, isSleepBlocker: true, display: '📱', settledDisplay: '🔕', sleepLabel: 'phone' },
+                    { x: 8, y: 4, char: 'u', type: 'blinds', isInteractable: true, isSleepBlocker: true, display: '🪟', settledDisplay: '🌙', sleepLabel: 'blinds' },
+                    { x: 5, y: 5, char: 'r', type: 'thought', isInteractable: true, isSleepBlocker: true, display: '💭', settledDisplay: '💤', sleepLabel: 'thoughts' },
+                    { x: 7, y: 6, char: 'B', type: 'bed', isInteractable: true, isBed: true, display: '🛏️' }
+                ],
+                customLegend: { 'L': '💡', 'B': '🛏️' } 
             },
             {
-                title: "Dream 2: Sweet Dream", objective: "Collect all 5 cronuts!", hint: "Just walk over the croissants to eat them!", lyric: "last time i had a sweet dream i was eating Cronuts,",
+                title: "Dream 2: Sweet Dream", objective: "Collect all 5 cronuts and ride the sugar gusts.", hint: "Wind lanes push you sideways. Golden cronuts trigger Sugar Rush.", lyric: "last time i had a sweet dream i was eating Cronuts,",
                 type: 'collect', target: 'C', backgroundColor: '#87CEEB',
-                map: ["MMMMMMMMMMMMMMM", "M.C.......W..CM", "M.....P.......M", "M.W.......C...M", "M......M......M", "M.C.......M.W.M", "M....W..M....CM", "M.........C...M", "M.W....M.W....M", "MMMMMMMMMMMMMMM"],
+                map: [
+                    "MMMMMMMMMMMMMMMMM",
+                    "M..C....W....C..M",
+                    "M.W.....M....W..M",
+                    "M....P......C...M",
+                    "M..M.....W......M",
+                    "M.C....M....W...M",
+                    "M....W......M...M",
+                    "M......C....W...M",
+                    "M.W......M......M",
+                    "M....W......W...M",
+                    "MMMMMMMMMMMMMMMMM"
+                ],
+                worldData: [
+                    { x: 13, y: 2, char: '*', type: 'sweet_boost', display: '🥐', isMoving: true, path: [{x:13,y:2},{x:11,y:2},{x:11,y:4},{x:13,y:4}], speedMult: 0.35 },
+                    { x: 3, y: 8, char: '*', type: 'sweet_boost', display: '🥐', isMoving: true, path: [{x:3,y:8},{x:7,y:8},{x:7,y:6},{x:3,y:6}], speedMult: 0.4 }
+                ],
                 customLegend: { 'C': '🥐', 'M': '☁️', 'W': '💨' }
             },
             {
-                title: "Dream 3: Dying for Love", objective: "Collect 3 Hearts! They move every 6s.", hint: "Look behind the tombstones.", lyric: "last time i had a nightmare, i was dying for love,",
+                title: "Dream 3: Dying for Love", objective: "Collect 3 hearts before the graveyard swallows them.", hint: "Hearts beat behind the graves, and the ghosts get bolder with every one you touch.", lyric: "last time i had a nightmare, i was dying for love,",
                 type: 'lucid_find', target: 'H', danger: 'G', backgroundColor: '#1a0000',
-                map: ["###########", "#t.....t..#", "#.........#", "#t..P..t..#", "#.........#", "#t.....t..#", "#.........#", "###########"],
-                worldData: [{ x: 1, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 7, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 4, y: 5, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' }, { x: 1, y: 3, char: 't', isInteractable: false, display: '🪦' }, { x: 7, y: 3, char: 't', isInteractable: false, display: '🪦' }, { x: 1, y: 5, char: 't', isInteractable: false, display: '🪦' }, { x: 7, y: 5, char: 't', isInteractable: false, display: '🪦' }, { x: 8, y: 2, char: 'G', isMoving: true, path: [{x:8,y:2},{x:2,y:2}], display: '👻' }, { x: 2, y: 6, char: 'G', isMoving: true, path: [{x:2,y:6},{x:2,y:2}], display: '👿' }, { x: 8, y: 6, char: 'G', isMoving: true, path: [{x:8,y:6},{x:8,y:2}], display: '👿' }],
+                map: [
+                    "#############",
+                    "#t...t...t..#",
+                    "#...........#",
+                    "#..t.....t..#",
+                    "#...........#",
+                    "#....P......#",
+                    "#t.....t....#",
+                    "#...........#",
+                    "#..t.....t..#",
+                    "#...........#",
+                    "#############"
+                ],
+                worldData: [
+                    { x: 1, y: 1, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' },
+                    { x: 9, y: 3, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' },
+                    { x: 7, y: 6, char: 'R', isInteractable: true, isHidden: false, trueForm: 'H', display: '❤️' },
+                    { x: 1, y: 1, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 5, y: 1, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 9, y: 1, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 3, y: 3, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 9, y: 3, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 1, y: 6, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 7, y: 6, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 3, y: 8, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 9, y: 8, char: 't', type: 'grave', isInteractable: false, display: '🪦' },
+                    { x: 10, y: 2, char: 'G', isMoving: true, path: [{x:10,y:2},{x:2,y:2}], display: '👻', speedMult: 0.9 },
+                    { x: 2, y: 9, char: 'G', isMoving: true, path: [{x:2,y:9},{x:2,y:2}], display: '👿', speedMult: 1.0 },
+                    { x: 10, y: 7, char: 'G', isMoving: true, isGhost: true, display: '👻', speedMult: 0.9 },
+                    { x: 5, y: 2, char: 'G', isMoving: true, isGhost: true, display: '👿', speedMult: 0.82 }
+                ],
                 customLegend: { 't': '🪦' }
             },
             {
-                title: "Dream 4: Astral Rising", objective: "Reach the Astral Form (✨) at the top!", hint: "Dodge the demons and head North.", lyric: "fighting for my life astral body rising above,",
+                title: "Dream 4: Astral Rising", objective: "Ride the astral pull upward and reach your form above.", hint: "Astral orbs freeze the demons for a moment. The current is always pulling you higher.", lyric: "fighting for my life astral body rising above,",
                 type: 'lucid_find', target: 'v', danger: 'D', backgroundColor: '#220033', 
                 // Walls are 'Z' (Sleep Zs), Moving enemies are 'D' (Demons)
-                map: ["BBBBBBBB", "B.v....B", "BBBBBBBB", "B......B", "B.Z..Z.B", "B......B", "B.Z..Z.B", "B......B", "B.P....B", "BBBBBBBB"],
+                map: [
+                    "BBBBBBBBB",
+                    "B.......B",
+                    "B.B...B.B",
+                    "B...Z...B",
+                    "B.......B",
+                    "B.Z...Z.B",
+                    "B.B...B.B",
+                    "B.......B",
+                    "B.Z.B.Z.B",
+                    "B.......B",
+                    "B.B...B.B",
+                    "B...Z...B",
+                    "B.......B",
+                    "B...P...B",
+                    "BBBBBBBBB"
+                ],
                 customLegend: { 'Z': '💤', 'B': '🛏️', 'D': '👿' },
-                worldData: [{ x: 2, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' }, { x: 2, y: 4, char: 'D', isMoving: true, path: [{x:1,y:4},{x:6,y:4}], display: '👿' }, { x: 5, y: 6, char: 'D', isMoving: true, path: [{x:6,y:6},{x:1,y:6}], display: '👿' }]
+                worldData: [
+                    { x: 4, y: 1, char: 'v', isInteractable: true, isHidden: false, trueForm: 'v', display: '✨' },
+                    { x: 1, y: 4, char: 'D', isMoving: true, path: [{x:1,y:4},{x:7,y:4}], display: '👿', speedMult: 1.0 },
+                    { x: 7, y: 7, char: 'D', isMoving: true, path: [{x:7,y:7},{x:1,y:7}], display: '👿', speedMult: 1.05 },
+                    { x: 1, y: 10, char: 'D', isMoving: true, path: [{x:1,y:10},{x:7,y:10}], display: '👿', speedMult: 1.15 },
+                    { x: 7, y: 12, char: 'D', isMoving: true, path: [{x:7,y:12},{x:1,y:12}], display: '👿', speedMult: 1.08 },
+                    { x: 1, y: 9, char: 'o', type: 'astral_orb', isInteractable: false, display: '🔮' },
+                    { x: 7, y: 5, char: 'o', type: 'astral_orb', isInteractable: false, display: '🔮' }
+                ]
             },
              // ... [Other levels with their specific legends or relying on globals] ...
              {
@@ -801,8 +878,10 @@
             game.visionMistakes = 0;
             game.visionWrongLetters = [];
             game.visionMatrixSeed = 0;
+            game.sweetRushTimer = 0;
             game.surfBoostTimer = 0;
             game.surfCurrentBands = [];
+            game.astralFreezeTimer = 0;
             game.tvGlitchActive = false;
             game.tvGlitchTimer = 0;
             game.tvGlitchSource = null;
@@ -1137,6 +1216,103 @@
             spawnParticles(obj.x + 20, obj.y + 20, 80, "#9fe8ff");
         }
 
+        function getInsomniaBlockers() {
+            return game.worldData.filter(obj => obj.isSleepBlocker && !obj.cleared);
+        }
+
+        function drawOpeningArcBackdrop(level) {
+            const t = Date.now();
+            ctx.save();
+
+            if (level.type === 'tutorial') {
+                const glow = ctx.createRadialGradient(canvas.width * 0.72, canvas.height * 0.22, 12, canvas.width * 0.72, canvas.height * 0.22, 220);
+                glow.addColorStop(0, "rgba(255, 244, 200, 0.26)");
+                glow.addColorStop(1, "rgba(255, 244, 200, 0)");
+                ctx.fillStyle = glow;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < 8; i++) {
+                    const x = ((i * 97) + ((t / 28) % (canvas.width + 80))) % (canvas.width + 80) - 40;
+                    const y = 70 + (i * 42);
+                    ctx.fillStyle = "rgba(255,255,255,0.08)";
+                    ctx.beginPath();
+                    ctx.arc(x, y, 16, 0, Math.PI * 2);
+                    ctx.arc(x + 16, y + 4, 14, 0, Math.PI * 2);
+                    ctx.arc(x - 14, y + 6, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (level.title.includes("Sweet Dream")) {
+                for (let i = 0; i < 6; i++) {
+                    const x = ((i * 140) + ((t / 24) % (canvas.width + 120))) % (canvas.width + 120) - 60;
+                    const y = 40 + (i * 52);
+                    ctx.fillStyle = "rgba(255,255,255,0.16)";
+                    ctx.beginPath();
+                    ctx.arc(x, y, 24, 0, Math.PI * 2);
+                    ctx.arc(x + 22, y + 6, 20, 0, Math.PI * 2);
+                    ctx.arc(x - 20, y + 8, 18, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                for (let i = 0; i < 16; i++) {
+                    ctx.fillStyle = `rgba(255, 232, 120, ${0.08 + ((i % 3) * 0.03)})`;
+                    ctx.fillRect(((i * 57) + ((t / 18) % canvas.width)) % canvas.width, (i * 31) % canvas.height, 3, 3);
+                }
+            } else if (level.title.includes("Dying for Love")) {
+                for (let i = 0; i < 5; i++) {
+                    const y = ((i * 90) + ((t / 55) % 70)) % canvas.height;
+                    ctx.fillStyle = "rgba(255, 60, 90, 0.07)";
+                    ctx.fillRect(0, y, canvas.width, 34);
+                }
+            } else if (level.title.includes("Astral Rising")) {
+                for (let i = 0; i < 22; i++) {
+                    const x = (i * 43) % canvas.width;
+                    const y = ((i * 71) + ((t / 22) % canvas.height)) % canvas.height;
+                    const size = i % 3 === 0 ? 3 : 2;
+                    ctx.fillStyle = "rgba(230, 210, 255, 0.55)";
+                    ctx.fillRect(x, y, size, size);
+                }
+                for (let i = 0; i < 4; i++) {
+                    const beamX = ((i * 170) + ((t / 30) % 90)) % canvas.width;
+                    const grad = ctx.createLinearGradient(beamX, 0, beamX + 90, 0);
+                    grad.addColorStop(0, "rgba(195, 130, 255, 0)");
+                    grad.addColorStop(0.5, "rgba(195, 130, 255, 0.14)");
+                    grad.addColorStop(1, "rgba(195, 130, 255, 0)");
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(beamX, 0, 90, canvas.height);
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function drawOpeningArcHud(level) {
+            ctx.save();
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 15px Inter';
+
+            if (level.type === 'tutorial') {
+                const blockers = getInsomniaBlockers();
+                const text = blockers.length > 0
+                    ? `Sleep Ritual: ${blockers.map(obj => obj.sleepLabel).join(' • ')}`
+                    : 'Sleep Ritual: room settled';
+                ctx.fillStyle = 'rgba(0,0,0,0.58)';
+                ctx.fillRect(16, canvas.height - 48, Math.min(canvas.width - 32, 440), 32);
+                ctx.fillStyle = blockers.length > 0 ? '#ffd37a' : '#9bf3b1';
+                ctx.fillText(text, 28, canvas.height - 32);
+            } else if (level.title.includes("Sweet Dream") && game.sweetRushTimer > 0) {
+                ctx.fillStyle = 'rgba(57, 33, 0, 0.62)';
+                ctx.fillRect(16, canvas.height - 48, 170, 32);
+                ctx.fillStyle = '#ffe87e';
+                ctx.fillText('SUGAR RUSH', 28, canvas.height - 32);
+            } else if (level.title.includes("Astral Rising") && game.astralFreezeTimer > 0) {
+                ctx.fillStyle = 'rgba(22, 9, 42, 0.64)';
+                ctx.fillRect(16, canvas.height - 48, 220, 32);
+                ctx.fillStyle = '#e5b8ff';
+                ctx.fillText('ASTRAL ORBS ACTIVE', 28, canvas.height - 32);
+            }
+
+            ctx.restore();
+        }
+
         function startVisionLevelHint(level) {
             if (level.startHint) {
                 scheduleGameAction(() => showHint(level.startHint, 4200), 300);
@@ -1343,12 +1519,37 @@
 
                 if (level.type === 'tutorial') {
                     if (obj.isBed) {
-                        const light = game.worldData.find(o => o.char === 'L');
-                        if (light && light.isLightOn) { showHint("I can't sleep with the light on!"); spawnText(ox, oy - 20, "Too Bright!", "#ff5555"); } 
-                        else { showHint("Sweet dreams..."); spawnText(ox, oy - 20, "Zzz...", "#aaa"); nextLevel(); }
+                        const blockers = getInsomniaBlockers();
+                        if (blockers.length > 0) {
+                            showHint(`Still awake: ${blockers.map(item => item.sleepLabel).join(', ')}`, 2600);
+                            spawnText(ox, oy - 20, "Not Yet", "#ff5555");
+                        } else {
+                            showHint("Sweet dreams...");
+                            spawnText(ox, oy - 20, "Zzz...", "#aaa");
+                            nextLevel();
+                        }
                         return;
                     }
-                    if (obj.char === 'L') { obj.char = obj.trueForm; obj.emoji = getEmoji(obj.char); obj.isLightOn = false; spawnText(ox, oy - 20, "Click!", "#ffff00"); showHint("You turned off the light."); return; }
+                    if (obj.isSleepBlocker && !obj.cleared) {
+                        obj.cleared = true;
+                        obj.isInteractable = false;
+                        obj.emoji = obj.settledDisplay || '';
+                        if (obj.type === 'lamp') {
+                            obj.isLightOn = false;
+                            spawnText(ox, oy - 20, "Click!", "#ffff00");
+                            showHint("The light clicked off.");
+                        } else if (obj.type === 'phone') {
+                            spawnText(ox, oy - 20, "Silent", "#7ee2ff");
+                            showHint("The phone stopped buzzing.");
+                        } else if (obj.type === 'blinds') {
+                            spawnText(ox, oy - 20, "Moonlight", "#cbd5ff");
+                            showHint("You closed the blinds and let the moon in.");
+                        } else if (obj.type === 'thought') {
+                            spawnText(ox, oy - 20, "Breathe", "#d7c6ff");
+                            showHint("Your racing thoughts finally slowed down.");
+                        }
+                        return;
+                    }
                 }
                 
                 if (level.type === 'car_runner' && obj.char === 'X') {
@@ -1519,6 +1720,11 @@
                         if (level.title.includes("Dying for Love")) {
                             game.collected++; obj.isCollected = true; obj.isInteractable = false; obj.emoji = ''; 
                             spawnText(ox, oy - 20, "Got Heart!", "#ff0000"); showHint(`Collected ${game.collected}/3 Hearts`);
+                            game.dangers.forEach(danger => {
+                                if (danger.char === level.danger) {
+                                    danger.speedMult = Math.min((danger.speedMult || 1) + 0.08, 1.75);
+                                }
+                            });
                             if (game.collected >= 3) { nextLevel(); } return;
                         }
                         // Stealth Collect logic (Badman)
@@ -1598,9 +1804,16 @@
             if (level.type === 'lazy_legs') {
                 currentSpeed *= 0.5;
             }
+            if (level.title.includes("Sweet Dream") && game.sweetRushTimer > 0) {
+                currentSpeed *= 1.45;
+                game.sweetRushTimer -= deltaTime;
+            }
             if (level.type === 'surf_runner' && game.surfBoostTimer > 0) {
                 currentSpeed *= 1.25;
                 game.surfBoostTimer -= deltaTime;
+            }
+            if (level.title.includes("Astral Rising") && game.astralFreezeTimer > 0) {
+                game.astralFreezeTimer -= deltaTime;
             }
 
             if (player.isDashing) {
@@ -1616,6 +1829,19 @@
             else {
                 if (keys.up) dy = -moveStep; if (keys.down) dy = moveStep;
                 if (keys.left) dx = -moveStep; if (keys.right) dx = moveStep;
+            }
+
+            if (level.title.includes("Sweet Dream")) {
+                const gustTile = getTileAt(player.x + (player.width / 2), player.y + player.height - 6);
+                if (gustTile && gustTile.char === 'W') {
+                    dx += ((((gustTile.r + Math.floor(Date.now() / 650)) % 2 === 0) ? 1 : -1) * moveStep * 0.34);
+                    if (Math.random() < 0.07) {
+                        spawnParticles(player.x + player.width / 2, player.y + player.height / 2, 1, "#ffffff");
+                    }
+                }
+                if (game.sweetRushTimer > 0 && Math.random() < 0.26) {
+                    spawnParticles(player.x + player.width / 2, player.y + player.height / 2, 1, "#ffe87e");
+                }
             }
 
             if (level.type === 'surf_runner') {
@@ -1638,6 +1864,13 @@
 
                 if (Math.random() < (game.surfBoostTimer > 0 ? 0.45 : 0.22)) {
                     spawnParticles(player.x + player.width / 2, player.y + player.height - 8, 1, "#c9f6ff");
+                }
+            }
+
+            if (level.title.includes("Astral Rising")) {
+                dy -= moveStep * 0.08;
+                if (game.astralFreezeTimer > 0 && Math.random() < 0.28) {
+                    spawnParticles(player.x + player.width / 2, player.y + player.height / 2, 1, "#d9b7ff");
                 }
             }
             
@@ -1680,12 +1913,24 @@
             }
             
             // Level Specific Logics
+            if (level.type === 'tutorial') {
+                game.worldData.forEach(obj => {
+                    if (obj.isSleepBlocker && !obj.cleared && Math.random() < 0.02) {
+                        const color = obj.type === 'lamp' ? "#ffe8a3" : obj.type === 'phone' ? "#7ee2ff" : obj.type === 'blinds' ? "#cbd5ff" : "#d7c6ff";
+                        spawnParticles(obj.x + 20, obj.y + 20, 1, color);
+                    }
+                });
+            }
             if (game.currentLevel === 2) {
                 game.heartTimer += deltaTime;
-                if (game.heartTimer > 6000) {
+                const hearts = game.worldData.filter(o => o.trueForm === 'H' && !o.isCollected);
+                if (hearts.length > 0 && Math.random() < 0.06) {
+                    const pulse = hearts[Math.floor(Math.random() * hearts.length)];
+                    spawnParticles(pulse.x + 20, pulse.y + 20, 1, "#ff6b8b");
+                }
+                if (game.heartTimer > 4500) {
                     game.heartTimer = 0;
-                    const hearts = game.worldData.filter(o => o.char === 'R' && o.trueForm === 'H' && !o.isCollected);
-                    const tombstones = game.worldData.filter(o => o.char === 'T');
+                    const tombstones = shuffleArray(game.worldData.filter(o => o.char === 't' || o.type === 'grave'));
                     hearts.forEach(heart => {
                         if (tombstones.length > 0) {
                             const target = tombstones[Math.floor(Math.random() * tombstones.length)];
@@ -1723,6 +1968,7 @@
         }
         
         function updateWorldData(deltaTime) {
+            const level = levels[game.currentLevel];
             const moveSpeed = (player.baseSpeed * 0.5) * deltaTime;
             game.worldData.forEach(obj => {
                 if (obj.isFollower) {
@@ -1736,6 +1982,9 @@
                         obj.x += (dx / dist) * speed;
                         obj.y += (dy / dist) * speed;
                     }
+                    return;
+                }
+                if (level.title.includes("Astral Rising") && game.astralFreezeTimer > 0 && obj.char === level.danger) {
                     return;
                 }
                 // Ghost / Chaser Logic
@@ -1830,7 +2079,7 @@
                 const tile = getTileAt(c.x, c.y);
                 if (!tile) return true; 
                 // Updated wall chars including Eye Chart letters
-                if (['#', 'm', 'M', 'v', 'J', 'S', 'O', 'v', 'v', '|', 'x'].includes(tile.char)) return true;
+                if (['#', 'm', 'M', 'v', 'J', 'S', 'O', '|', 'x', 'B', 'Z', 't'].includes(tile.char)) return true;
                 
                 // Special Eye Test Level Wall Logic
                 if (levels[game.currentLevel].title.includes("Eye Test") && 
@@ -1883,6 +2132,30 @@
                     if (isRectCollision(pRect, tRect)) {
                          game.interactionTarget = obj;
                          return;
+                    }
+                }
+
+                if (level.title.includes("Sweet Dream") && obj.type === 'sweet_boost' && !obj.isCollected) {
+                    const sweetRect = { x: obj.x + 6, y: obj.y + 6, width: game.fixedTileSize - 12, height: game.fixedTileSize - 12 };
+                    if (isRectCollision(pRect, sweetRect)) {
+                        obj.isCollected = true;
+                        obj.emoji = '';
+                        game.sweetRushTimer = 3500;
+                        spawnParticles(obj.x + 20, obj.y + 20, 32, "#ffe87e");
+                        spawnText(obj.x + 20, obj.y, "SUGAR RUSH!", "#ffe87e");
+                        showHint("Golden cronut caught. Sugar Rush!", 1800);
+                    }
+                }
+
+                if (level.title.includes("Astral Rising") && obj.type === 'astral_orb' && !obj.isCollected) {
+                    const orbRect = { x: obj.x + 5, y: obj.y + 5, width: game.fixedTileSize - 10, height: game.fixedTileSize - 10 };
+                    if (isRectCollision(pRect, orbRect)) {
+                        obj.isCollected = true;
+                        obj.emoji = '';
+                        game.astralFreezeTimer = 3200;
+                        spawnParticles(obj.x + 20, obj.y + 20, 36, "#d9b7ff");
+                        spawnText(obj.x + 20, obj.y, "ASTRAL", "#d9b7ff");
+                        showHint("The demons froze in the astral lane.", 1800);
                     }
                 }
 
@@ -2137,6 +2410,7 @@
             }
             
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawOpeningArcBackdrop(level);
 
             // Ascension Text
             if (level.type === 'ascension') {
@@ -2290,6 +2564,14 @@
                         } else if (level.type === 'vision_hangman' && obj.type === 'vision_granny') {
                             alpha = 0.95;
                             ctx.fillStyle = '#ffffff';
+                        } else if (level.title.includes("Sweet Dream") && obj.type === 'sweet_boost') {
+                            ctx.fillStyle = '#fff1a8';
+                            ctx.shadowBlur = 18;
+                            ctx.shadowColor = '#ffe87e';
+                        } else if (level.title.includes("Astral Rising") && obj.type === 'astral_orb') {
+                            ctx.fillStyle = '#f4d7ff';
+                            ctx.shadowBlur = 18;
+                            ctx.shadowColor = '#d9b7ff';
                         } else if (level.type === 'surf_runner' && obj.type === 'surf_finish') {
                             alpha = obj.isOn ? 1 : 0.78;
                             ctx.fillStyle = '#ffffff';
@@ -2335,6 +2617,7 @@
             if (level.type === 'mind_manifest') {
                 drawMindManifestHud();
             }
+            drawOpeningArcHud(level);
             drawTvGlitchOverlay();
             
             let grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 100, canvas.width/2, canvas.height/2, canvas.width);
