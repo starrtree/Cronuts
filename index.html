@@ -421,32 +421,32 @@
             },
              // ... [Other levels with their specific legends or relying on globals] ...
              {
-                title: "Dream 5: Mirrors", objective: "Interact (✨) with mirrors! Find the Star (⭐).", hint: "Watch closely. The correct mirror sparkles occasionally.", lyric: "seeing things that i never seen,",
+                title: "Dream 5: Mirrors", objective: "Navigate the mirror maze and reveal the hidden star.", hint: "Use lucid touch on mirrors—one true reflection glints brighter than the rest.", lyric: "seeing things that i never seen,",
                 type: 'lucid_find', target: 'S', backgroundColor: '#E6E8FA',
                 map: ["#############", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#.....P.....#", "#.m.m.m.m.m.#", "#...........#", "#.m.m.m.m.m.#", "#############"], worldData: [] 
             },
             {
-                title: "Dream 6: Cat-Women", objective: "Find Halle Berry hidden among the cats.", hint: "Interact with the black cats. One is a dancer!", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
+                title: "Dream 6: Cat-Women", objective: "Track the feline phantoms and reveal Halle Berry.", hint: "Bats patrol the hall. Tag black cats quickly before they reset the room.", lyric: "scary things like Halloween, Cat-women like Halle Berry,",
                 type: 'lucid_find', target: 'h', danger: 'b', backgroundColor: '#222', 
                 map: ["JJJJJJJJJJJ", "J.c..G..c.J", "J.........J", "J.c..P..c.J", "J.........J", "J.b..c..b.J", "J.........J", "J.c..G..c.J", "JJJJJJJJJJJ"],
                 worldData: [{ x: 2, y: 5, char: 'b', isMoving: true, path: [{x:2,y:5},{x:8,y:5}], display: '🦇' }]
             },
             {
-                title: "Dream 7: Billie Jean", objective: "Light up 10 Tiles! Dodge Billie Jean.", hint: "Interact with the glowing tile. Watch out for girls!", lyric: "BMs like Billie Jean",
+                title: "Dream 7: Billie Jean", objective: "Moonwalk the floor and light 10 disco tiles.", hint: "Keep moving after every activation—dancers cross diagonally and punish standing still.", lyric: "BMs like Billie Jean",
                 type: 'tile_light_up', outfit: 'mj', danger: 'W', backgroundColor: '#000000',
                 map: ["FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFFFFFFF", "FFF.P.FF"], 
                 worldData: [{ x: 0, y: 0, char: 'W', isMoving: true, path: [{x:0,y:0},{x:7,y:7}], display: '💃🏽' }, { x: 7, y: 0, char: 'W', isMoving: true, path: [{x:7,y:0},{x:0,y:7}], display: '💃🏽' }],
                 customLegend: { 'F': '💃🏽' }
             },
             {
-                title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses falling from the NASA chute!", hint: "Stay inside the dome. Catch the glasses before they break.", lyric: "underseas drinking brandy... like i’m Sandy",
+                title: "Dream 8: Sandy", objective: "Catch 5 Brandy glasses in the deep-sea dome.", hint: "Hold center, then dash to the lane where the next glass is dropping.", lyric: "underseas drinking brandy... like i’m Sandy",
                 type: 'drop_catch', target: 'A', danger: 'Q', backgroundColor: '#1E90FF', 
                 map: ["OOOOOOOOOOOOO", "O...........O", "O...AAAAA...O", "O.G.G.G.G.G.O", "O.G.G.G.G.G.O", "O.G.G.T.G.G.O", "O.G.G.G.G.G.O", "O.....P.....O", "OOOOOOOOOOOOO"],
                 worldData: [{ x: 6, y: 5, char: 'T', isInteractable: false, display: '🌳' }, { x: 2, y: 6, char: 'Q', isMoving: true, path: [{x:2,y:6},{x:10,y:6},{x:10,y:4},{x:2,y:4}], display: '🐿️' }],
                 customLegend: { 'O': '🔮', 'G': '🌳' }
             },
             {
-                title: "Dream 9: Hard Knock Life", objective: "Help Annie. Find a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "Collect all 3 items then return to the girl.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
+                title: "Dream 9: Hard Knock Life", objective: "Help Annie by finding a ❤️, 🚗, and 👨‍👩‍👧‍👦.", hint: "The maze folds back on itself—grab each memory token, then return to Annie.", lyric: "hard knock like Annie, cuz my heart’ll stop for my family,",
                 type: 'fetch_quest', target: 'n', backgroundColor: '#A52A2A', 
                 map: ["################", "#.n.........H..#", "#.P..........#.#", "#............#.#", "####.#.#######.#", "#.k..#.........#", "#....######....#", "#.f............#", "################"],
                 worldData: [{ x: 2, y: 1, char: 'n', isInteractable: true, isGate: true, display: '👧' }, { x: 12, y: 1, char: 'H', isInteractable: true, isCollectible: true, display: '❤️' }, { x: 2, y: 5, char: 'k', isInteractable: true, isCollectible: true, display: '🚗' }, { x: 2, y: 7, char: 'f', isInteractable: true, isCollectible: true, display: '👨‍👩‍👧‍👦' }],
@@ -454,8 +454,8 @@
             },
             {
                 title: "Dream 10: Badman's Cul-de-sac",
-                objective: "Save candy from 6 houses! Kids arrive in 12s!",
-                hint: "Watch out for the Jackolantern-Joker-Ghost!",
+                objective: "Snag candy from 6 houses before the patrol catches you.",
+                hint: "Loop around blocks and break line-of-sight when the joker starts chasing.",
                 lyric: "takin my sweet time like a badman taking some candy,",
                 type: 'stealth_collect', target: 'y', danger: 'J', outfit: 'batman', backgroundColor: '#FFA500', timeLimit: 12,
                 map: ["................", ".HH..........HH.", "H...y......y...H", "H..y........y..H", "....y......y....", "................", "H......P.......H", "H..y........y..H", ".HH..........HH.", "................"],
@@ -463,9 +463,24 @@
                 customLegend: { 'H': '🏘️' }
             },
             {
-                title: "Dream 11: Crazy Driver",
+                title: "Dream 11: Save Me",
+                objective: "Collect proof you're grown (💼, 🚗, 👓), then reach mama.",
+                hint: "Your mama waits at the top. Bring all three symbols of independence before talking to her.",
+                lyric: "Baby can you please save me? My mama still treat me like a baby...",
+                type: 'fetch_quest', target: 'o', backgroundColor: '#3d2b4f',
+                map: ["################", "#.....o........#", "#.###.#######..#", "#...#.....#....#", "#...#.P...#.##.#", "#.###.###.#....#", "#...#...#.#.##.#", "#...###.#...#..#", "#k....g....w...#", "################"],
+                worldData: [
+                    { x: 6, y: 1, char: 'o', isInteractable: true, isGate: true, display: '👵' },
+                    { x: 1, y: 8, char: 'k', isInteractable: true, isCollectible: true, display: '🚗' },
+                    { x: 6, y: 8, char: 'g', isInteractable: true, isCollectible: true, display: '👓' },
+                    { x: 11, y: 8, char: 'w', isInteractable: true, isCollectible: true, display: '💼' }
+                ],
+                questItems: ['k', 'g', 'w']
+            },
+            {
+                title: "Dream 12: Crazy Driver",
                 objective: "Drive against the Crazy Mamas! Reach the 🏁.",
-                lyric: "takin' my sweet time like a Batman takin' some candy...",
+                lyric: "Even though I would kill for her, that woman still drive me crazy...",
                 type: 'car_runner', target: 'X', outfit: 'car', danger: 'M', hint: "Avoid the oncoming drivers! Hit Mamas = Spin out!", backgroundColor: '#333333',
                 map: ["|...:...:...:...|","|...:..X:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...:...:...|","|...:...: P :...|","|...:...:...:...|"],
                 worldData: [
@@ -477,11 +492,11 @@
                 ]
             },
             {
-                title: "Dream 12: Lost Vision",
-                objective: "Search the letter-field and spell VISION before the hangman is finished.",
+                title: "Dream 13: Lost Vision",
+                objective: "Cut through the static and spell VISION before darkness settles in.",
                 lyric: "won't change even when she's 80, and her eyesight gets hazy...",
-                type: 'vision_hangman', hint: "Help get her _ _ _ _ _ _ back", startHint: "Help get her _ _ _ _ _ _ back", backgroundColor: '#07131d',
-                word: 'VISION', mapWidth: 42, mapHeight: 28,
+                type: 'vision_hangman', hint: "Find the hidden word before the hangman is complete. Wrong picks accelerate the countdown.", startHint: "Help get her _ _ _ _ _ _ back.", backgroundColor: '#07131d',
+                word: 'VISION', mapWidth: 46, mapHeight: 30,
                 customLegend: { '#': '' },
                 map: [
                     "########################",
@@ -506,10 +521,10 @@
                 worldData: [],
             },
             {
-                title: "Dream 13: Navy Surf",
-                objective: "Ride the tide, dodge wipeouts, and surf to the TV on shore.",
+                title: "Dream 14: Navy Surf",
+                objective: "Collect 4 surf boosts, dodge wipeouts, then power the shore TV.",
                 lyric: "like the ocean waves to the Navy, girl I'm used to getting wavy...",
-                type: 'surf_runner', target: 'X', outfit: 'surfer', danger: 'W', hint: "The tide shifts all across the ocean. Flow around the hazards and hit the TV when you reach the beach.", backgroundColor: '#0b4f74', boostGoal: 0, courseWidth: 27, courseHeight: 40, shoreRows: 5, currentBands: 9,
+                type: 'surf_runner', target: 'X', outfit: 'surfer', danger: 'W', hint: "Ride with the current lanes to chain boosts. The TV only wakes once your energy is full.", backgroundColor: '#0b4f74', boostGoal: 4, courseWidth: 27, courseHeight: 40, shoreRows: 5, currentBands: 11,
                 map: [],
                 worldData: [
                      { x: 13, y: 2, char: 'X', isInteractable: true, trueForm: 'X', display: '📺', type: 'surf_finish' },
@@ -517,6 +532,8 @@
                      { x: 21, y: 27, char: 'A', type: 'surf_boost', display: '⚡' },
                      { x: 8, y: 20, char: 'A', type: 'surf_boost', display: '⚡' },
                      { x: 18, y: 13, char: 'A', type: 'surf_boost', display: '⚡' },
+                     { x: 13, y: 16, char: 'A', type: 'surf_boost', display: '⚡' },
+                     { x: 24, y: 5, char: 'A', type: 'surf_boost', display: '⚡' },
                      { x: 1, y: 7, char: 'W', isMoving: true, path: [{x:1,y:7},{x:25,y:7}], display: '🌊', speedMult: 0.95 },
                      { x: 25, y: 10, char: 'W', isMoving: true, path: [{x:25,y:10},{x:1,y:10}], display: '🪨', speedMult: 1.0 },
                      { x: 1, y: 14, char: 'W', isMoving: true, path: [{x:1,y:14},{x:25,y:14}], display: '🦈', speedMult: 1.18 },
@@ -529,31 +546,33 @@
                 customLegend: { '|': '', 'A': '⚡', 'W': '' }
             },
             {
-                title: "Dream 14: Sacred",
-                objective: "Is it yes or no?",
+                title: "Dream 15: Sacred",
+                objective: "Choose with conviction: yes or no.",
                 lyric: "yes or no not a maybe, gotta make sure cuz its sacred,",
                 type: 'lucid_choice',
-                hint: "Is life a choice?",
+                hint: "Maybe is the trap. Trust your gut and commit.",
                 backgroundColor: '#FFFFFF', 
                 map: ["WWWWWWWWWWWW", "W..........W", "W....P.....W", "W..........W", "W....?.....W", "W..........W", "W.Y......N.W", "WWWWWWWWWWWW"],
                 worldData: [ { x: 2, y: 6, char: 'Y', isInteractable: true, trueForm: 'S', display: '✔️' }, { x: 9, y: 6, char: 'N', isInteractable: true, trueForm: 'D', display: '❌' } ]
             },
             {
-                title: "Dream 15: No Faking",
-                objective: "Find the real diamond.",
+                title: "Dream 16: No Faking",
+                objective: "Expose the one real diamond hidden in a vault of fakes.",
                 lyric: "not a big fan of faking,",
-                type: 'lucid_find', target: 'd', hint: "Most of these diamonds are fake. Keep checking.", backgroundColor: '#FFD700', 
-                map: ["WWWWWWWWWWWW", "W.d....P...W", "W..........W", "W....d.....W", "W..........W", "W.d.....d..W", "WWWWWWWWWWWW"],
+                type: 'lucid_find', target: 'd', hint: "Most gems are traps. Scan the pattern, then commit to one.", backgroundColor: '#FFD700', 
+                map: ["WWWWWWWWWWWWWW", "W.d.....P....W", "W............W", "W....d....d..W", "W............W", "W.d......d...W", "W............W", "W....d....d..W", "WWWWWWWWWWWWWW"],
                  worldData: [
                     { x: 2, y: 1, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' }, { x: 5, y: 3, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
-                    { x: 2, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'd', display: '💎' }, { x: 8, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
+                    { x: 10, y: 3, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' }, { x: 2, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
+                    { x: 9, y: 5, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' }, { x: 5, y: 7, char: 'd', isInteractable: true, isHidden: false, trueForm: 'x', display: '💎' },
+                    { x: 10, y: 7, char: 'd', isInteractable: true, isHidden: false, trueForm: 'd', display: '💎' },
                 ]
             },
             {
-                title: "Dream 16: Big Plans",
-                objective: "Work -> Bank -> Home -> Invest.",
+                title: "Dream 17: Big Plans",
+                objective: "Work the loop, stack cash, and invest bigger than your safety net.",
                 lyric: "gotta lotta big plans i been making, and big bands im creating,",
-                type: 'investment_run', target: 'S', hint: "Click Office 3x -> Click Bank Money -> Invest", backgroundColor: '#228B22', 
+                type: 'investment_run', target: 'S', hint: "Work spawns paychecks, home stores safety, and star grows your future. Beat your home stash.", backgroundColor: '#228B22', paycheckEvery: 2, investGoal: 5, 
                 map: ["WWWWWWWWWWWW", "W.O........W", "W..........W", "W...P......W", "W..........W", "W.B......H.W", "W..........W", "W....I.....W", "WWWWWWWWWWWW"],
                  worldData: [
                      { x: 2, y: 1, char: 'O', isInteractable: true, display: '🏢', type: 'office' },
@@ -565,10 +584,10 @@
                 customLegend: { '$': '💵' }
             },
             {
-                title: "Dream 17: Manifest",
+                title: "Dream 18: Manifest",
                 objective: "Awaken 4 sparks and paint 70 dream-tiles to manifest a new reality.",
                 lyric: "manifesting new realities from my limitless imagination,",
-                type: 'mind_manifest', target: 'S', hint: "Move through the mindscape to paint reality into existence. Sparks change what you create.", backgroundColor: '#120f2d', realityGoal: 70,
+                type: 'mind_manifest', target: 'S', hint: "Paint enough reality, gather every spark, then step through the portal you create.", backgroundColor: '#120f2d', realityGoal: 70,
                 customLegend: { 'x': '', '#': '' },
                 map: [
                     "##################",
@@ -595,7 +614,7 @@
                 ]
             },
             {
-                title: "Dream 18: Ascension",
+                title: "Dream 19: Ascension",
                 objective: "Walk into the future and touch the star beneath AMAZING.",
                 lyric: "this life's so ____",
                 type: 'ascension', target: 'X', backgroundColor: '#87CEFA', 
@@ -1049,7 +1068,7 @@
 
             // FIX: Prioritize the main game emojis before handling special logic to avoid overwrites.
             // If it is the Eye Test level, ONLY then treat letters as letters.
-            if (game.currentLevel === 11) { // Index 11 is "Dream 12: The Eye Test" (0-based: 0..11)
+            if (game.currentLevel === 12) { // Index 12 is "Dream 13: Lost Vision" after inserting the new Dream 11
                 // Added C to exclusion list so C becomes C
                 if (['E','F','P','T','O','Z','L','D','A','B','C','J','K','M','N','Q','R','U','V','W','X'].includes(char)) return char; 
             }
@@ -1566,9 +1585,10 @@
                 
                 if (level.type === 'investment_run') {
                     if (obj.type === 'office') {
+                        const paycheckEvery = level.paycheckEvery || 3;
                         game.officeClicks++;
                         spawnText(ox, oy-20, "WORK", "#ffff00");
-                        if (game.officeClicks % 3 === 0) {
+                        if (game.officeClicks % paycheckEvery === 0) {
                             // Spawn money at bank location (Bank is at index 1 in worldData based on current map)
                             const bank = game.worldData.find(d => d.type === 'bank');
                             if (bank) {
@@ -1614,11 +1634,12 @@
                             updateMoneyUI();
                             spawnText(ox, oy-20, "INVESTED", "#ff00ff");
                             
-                            if (game.investedStar > game.investedHouse && game.investedStar >= 3) {
-                                showHint("Self-Investment Pays Off!");
+                            const investGoal = level.investGoal || 3;
+                            if (game.investedStar === game.investedHouse && game.investedStar >= investGoal) {
+                                showHint("Balanced investment secured.");
                                 scheduleGameAction(nextLevel, 1500);
                             } else {
-                                showHint(`Invested: ${game.investedStar}. Need more than House (${game.investedHouse})!`);
+                                showHint(`Balance both: Home ${game.investedHouse} / Star ${game.investedStar} (goal ${investGoal}).`);
                             }
                         } else {
                             showHint("Need cash to invest!");
@@ -1627,7 +1648,13 @@
                     return;
                 }
 
+
                 if (level.type === 'surf_runner' && obj.char === 'X') {
+                    if (game.targetCount > 0 && game.collected < game.targetCount) {
+                        showHint(`Need ${game.targetCount - game.collected} more boost${game.targetCount - game.collected === 1 ? '' : 's'} before the TV can power on.`);
+                        spawnText(ox, oy - 20, "LOW POWER", "#ffd166");
+                        return;
+                    }
                     obj.isOn = true;
                     spawnParticles(ox, oy, 70, "#9fe8ff");
                     spawnText(ox, oy - 20, "TV ON", "#9fe8ff");
@@ -1647,7 +1674,8 @@
                         spawnText(ox, oy - 20, obj.label || "IDEA", obj.trailColor);
                         showHint(`${obj.label || "Inspiration"} awakened.`, 2200);
 
-                        if (!game.mindPortalUnlocked && game.collected >= game.targetCount && game.mindSparksCollected >= 4) {
+                        const requiredSparks = level.requiredSparks || 4;
+                        if (!game.mindPortalUnlocked && game.collected >= game.targetCount && game.mindSparksCollected >= requiredSparks) {
                             const portal = game.worldData.find(item => item.type === 'mind_portal');
                             if (portal) {
                                 portal.char = 'S';
@@ -1663,7 +1691,8 @@
 
                     if (obj.type === 'mind_portal') {
                         if (!game.mindPortalUnlocked) {
-                            showHint(`Paint ${game.targetCount} tiles and awaken all 4 sparks first.`, 2400);
+                            const requiredSparks = level.requiredSparks || 4;
+                            showHint(`Paint ${game.targetCount} tiles and awaken all ${requiredSparks} sparks first.`, 2400);
                             return;
                         }
                         spawnParticles(ox, oy, 90, "#d8b4ff");
@@ -1848,14 +1877,14 @@
                 const current = getSurfCurrentAtPosition(level, player.x + (player.width / 2), player.y + player.height);
                 if (keys.joyActive) {
                     dx = (keys.joyX * moveStep * 0.95) + (current.x * moveStep * 0.7);
-                    dy = (current.y * moveStep * 0.9) + (keys.joyY * moveStep * 0.28);
+                    dy = (current.y * moveStep * 0.85) + (keys.joyY * moveStep * 0.95);
                 } else {
                     dx = current.x * moveStep * 0.7;
                     if (keys.left) dx -= moveStep * 0.95;
                     if (keys.right) dx += moveStep * 0.95;
-                    dy = current.y * moveStep * 0.9;
+                    dy = current.y * moveStep * 0.85;
                     if (keys.up) dy -= moveStep * 0.22;
-                    if (keys.down) dy += moveStep * 0.45;
+                    if (keys.down) dy += moveStep * 1.05;
                 }
 
                 if (game.surfBoostTimer > 0) {
@@ -2027,6 +2056,7 @@
         }
 
         function paintMindRealityTrail() {
+            const level = levels[game.currentLevel];
             const centerX = player.x + (player.width / 2);
             const centerY = player.y + (player.height / 2);
             const tile = getTileAt(centerX, centerY);
@@ -2050,7 +2080,8 @@
                 }
             }
 
-            if (!game.mindPortalUnlocked && game.collected >= game.targetCount && game.mindSparksCollected >= 4) {
+            const requiredSparks = level.requiredSparks || 4;
+            if (!game.mindPortalUnlocked && game.collected >= game.targetCount && game.mindSparksCollected >= requiredSparks) {
                 const portal = game.worldData.find(obj => obj.type === 'mind_portal');
                 if (portal) {
                     portal.char = 'S';
@@ -2350,7 +2381,8 @@
             ctx.textAlign = 'left';
             ctx.fillText(`Reality: ${Math.min(game.collected, game.targetCount)} / ${game.targetCount}`, 28, canvas.height - 38);
             ctx.textAlign = 'right';
-            ctx.fillText(`Sparks: ${game.mindSparksCollected} / 4`, canvas.width - 28, canvas.height - 38);
+            const requiredSparks = (levels[game.currentLevel]?.requiredSparks) || 4;
+            ctx.fillText(`Sparks: ${game.mindSparksCollected} / ${requiredSparks}`, canvas.width - 28, canvas.height - 38);
             ctx.restore();
         }
 
