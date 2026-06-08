@@ -1,0 +1,3 @@
+/* Cronuts multi-file refactor target.
+   TODO: Move the current inline <style> block from index.html here once the full split is applied.
+   Keeping this file present now makes the repo ready for the staged migration. */
